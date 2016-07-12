@@ -1,0 +1,2 @@
+logstash_configuration_files:
+  - 03-beats.conf
