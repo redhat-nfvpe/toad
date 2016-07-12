@@ -1,13 +1,41 @@
 # main.yml
 ---
-- hosts: elk
+- hosts: elasticsearch
   become: yes
   vars_files:
     - vars/main.yml
 
   roles:
     - { role: 'geerlingguy.repo-epel' }
-    - { role: 'geerlingguy.elasticsearch' }
+    - { role: 'leifmadsen.elasticsearch' }
+
+- hosts: logstash
+  become: yes
+  vars_files:
+    - vars/main.yml
+
+  roles:
+    - { role: 'geerlingguy.repo-epel' }
     - { role: 'leifmadsen.logstash' }
+
+- hosts: kibana
+  become: yes
+  vars_files:
+    - vars/main.yml
+
+  roles:
+    - { role: 'geerlingguy.repo-epel' }
     - { role: 'geerlingguy.nginx' }
-    - { role: 'leifmadsen.kibana-4',  }
+    - { role: 'leifmadsen.kibana-4' }
+
+  post_tasks:
+    - name: Validate SELinux is enabled
+      selinux:
+        policy: targeted
+        state: enforcing
+
+    - name: SELinux -- Enable httpd_can_network_connect
+      seboolean:
+        name: httpd_can_network_connect
+        state: yes
+        persistent: yes

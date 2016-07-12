@@ -1,7 +1,8 @@
 ---
 - src: geerlingguy.repo-epel
-- src: geerlingguy.elasticsearch
-#- src: geerlingguy.logstash
+- src: https://github.com/leifmadsen/ansible-role-elasticsearch.git
+  version: master
+  name: leifmadsen.elasticsearch
 - src: https://github.com/leifmadsen/ansible-role-logstash.git
   version: master
   name: leifmadsen.logstash

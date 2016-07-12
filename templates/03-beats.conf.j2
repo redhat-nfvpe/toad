@@ -26,5 +26,7 @@ output {
 #    codec => rubydebug 
 #  }
 
-  elasticsearch { }
+  elasticsearch {
+    hosts => ["{{ elasticsearch_network_address }}:{{ elasticsearch_http_port }}"]
+  }
 }
