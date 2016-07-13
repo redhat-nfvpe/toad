@@ -1,13 +1,1 @@
-[elk:children]
-elasticsearch
-logstash
-kibana
-
-[elasticsearch]
-elasticsearch01 ansible_ssh_host=10.3.13.167 ansible_ssh_user=centos
-
-[logstash]
-logstash01 ansible_ssh_host=10.3.13.228 ansible_ssh_user=centos
-
-[kibana]
-kibana01 ansible_ssh_host=10.3.13.182 ansible_ssh_user=centos
+localhost   ansible_connection=local

@@ -1,28 +1,25 @@
 # main.yml
 ---
-- hosts: elasticsearch
+
+- include: openstack.yml
+
+- hosts: all:!localhost
   become: yes
   vars_files:
     - vars/main.yml
+    - ~/.ansible/vars/elk_vars.yml
 
+- hosts: elasticsearch
   roles:
     - { role: 'geerlingguy.repo-epel' }
     - { role: 'leifmadsen.elasticsearch' }
 
 - hosts: logstash
-  become: yes
-  vars_files:
-    - vars/main.yml
-
   roles:
     - { role: 'geerlingguy.repo-epel' }
     - { role: 'leifmadsen.logstash' }
 
 - hosts: kibana
-  become: yes
-  vars_files:
-    - vars/main.yml
-
   roles:
     - { role: 'geerlingguy.repo-epel' }
     - { role: 'geerlingguy.nginx' }

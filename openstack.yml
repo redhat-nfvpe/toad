@@ -1,0 +1,35 @@
+# vim: set ft=ansible
+- name: Deploy on OpenStack
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Deploy an instance
+      os_server:
+        name: "{{ cloud_name_prefix }}-{{ item }}"
+        state: present
+        cloud: "{{ cloud_name }}"
+        region_name: "{{ cloud_region_name }}"
+        availability_zone: "{{ cloud_availability_zone }}"
+        image: "{{ cloud_image }}"
+        flavor: "{{ cloud_flavor }}"
+        key_name: "{{ cloud_key_name }}"
+        boot_from_volume: true
+        terminate_volume: true
+        volume_size: 20
+        security_groups: default
+        auto_ip: yes
+        timeout: 200
+      register: instances
+      with_items:
+        - elasticsearch
+        #        - logstash
+        #        - kibana
+
+    - name: Add host to inventory
+      add_host:
+        name: "{{ item.item }}"
+        groups: "{{ item.item }}"
+        ansible_host: "{{ item.server.public_v4 }}"
+        ansible_user: centos
+        ansible_become: true
+      with_items: "{{ instances.results }}"
