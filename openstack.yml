@@ -2,6 +2,9 @@
 - name: Deploy on OpenStack
   hosts: localhost
   gather_facts: false
+  vars_files:
+    - ~/.ansible/vars/elk_vars.yml
+
   tasks:
     - name: Deploy an instance
       os_server:
@@ -22,8 +25,8 @@
       register: instances
       with_items:
         - elasticsearch
-        #        - logstash
-        #        - kibana
+        - logstash
+        - kibana
 
     - name: Add host to inventory
       add_host:

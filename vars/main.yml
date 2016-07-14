@@ -1,7 +1,9 @@
 logstash_configuration_files:
   - 03-beats.conf
 
+elasticsearch_script_inline: false
+elasticsearch_script_index: false
 elasticsearch_http_port: 9200
-elasticsearch_network_address: "{{ hostvars['elasticsearch01']['ansible_eth0']['ipv4']['address'] }}"
+elasticsearch_network_address: "{{ hostvars['elasticsearch']['ansible_eth0']['ipv4']['address'] }}"
 elasticsearch_url: http://{{ elasticsearch_network_address }}:{{ elasticsearch_http_port }}
-elasticsearch_network_host: 0.0.0.0
+elasticsearch_network_host: _eth0:ipv4

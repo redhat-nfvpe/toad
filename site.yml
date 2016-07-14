@@ -1,25 +1,29 @@
 # main.yml
 ---
 
+# Deploy to OpenStack Servers
 - include: openstack.yml
-
-- hosts: all:!localhost
-  become: yes
-  vars_files:
-    - vars/main.yml
-    - ~/.ansible/vars/elk_vars.yml
+  when: use_openstack_deploy
 
 - hosts: elasticsearch
+  vars_files:
+    - vars/main.yml
+
   roles:
     - { role: 'geerlingguy.repo-epel' }
     - { role: 'leifmadsen.elasticsearch' }
 
 - hosts: logstash
+  vars_files:
+    - vars/main.yml
+
   roles:
     - { role: 'geerlingguy.repo-epel' }
     - { role: 'leifmadsen.logstash' }
 
 - hosts: kibana
+  vars_files:
+    - vars/main.yml
   roles:
     - { role: 'geerlingguy.repo-epel' }
     - { role: 'geerlingguy.nginx' }
