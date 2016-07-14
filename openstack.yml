@@ -8,7 +8,7 @@
   tasks:
     - name: Deploy an instance
       os_server:
-        name: "{{ cloud_name_prefix }}-{{ item }}"
+        name: "{{ cloud_name_prefix }}-{{ item.name }}"
         state: present
         cloud: "{{ cloud_name }}"
         region_name: "{{ cloud_region_name }}"
@@ -19,19 +19,18 @@
         boot_from_volume: true
         terminate_volume: true
         volume_size: 20
-        security_groups: default
+        security_groups: "{{ item.security_groups }}"
         auto_ip: yes
         timeout: 200
       register: instances
-      with_items:
-        - elasticsearch
-        - logstash
-        - kibana
+      with_items: "{{ instance_list }}"
+
+    - debug: var=instances
 
     - name: Add host to inventory
       add_host:
-        name: "{{ item.item }}"
-        groups: "{{ item.item }}"
+        name: "{{ item.item.name }}"
+        groups: "{{ item.item.name }}"
         ansible_host: "{{ item.server.public_v4 }}"
         ansible_user: centos
         ansible_become: true

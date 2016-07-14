@@ -40,3 +40,7 @@
         name: httpd_can_network_connect
         state: yes
         persistent: yes
+
+    - name: Where is Kibana located?
+      debug:
+        msg: "Kibana can be reached at http://{{hostvars['kibana']['ansible_host']}}"
