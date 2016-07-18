@@ -1,3 +1,6 @@
+# Variables setup for use in site.yml run.
+# Use host_vars/ or group_vars/ for openstack.yml setup.
+
 logstash_configuration_files:
   - 03-beats.conf
 

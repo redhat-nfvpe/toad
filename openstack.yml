@@ -25,7 +25,9 @@
       register: instances
       with_items: "{{ instance_list }}"
 
-    - debug: var=instances
+    - debug:
+        var: instances
+        verbosity: 1
 
     - name: Add host to inventory
       add_host:

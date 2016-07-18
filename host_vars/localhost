@@ -1,4 +1,5 @@
 use_openstack_deploy: true
+
 instance_list:
   - { name: elasticsearch, security_groups: "default,elasticsearch" }
   - { name: logstash, security_groups: "default,filebeat-input" }
