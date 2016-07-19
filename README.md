@@ -1,6 +1,9 @@
-# ansible-elk-stack
+# ansible-cira
 
-Deploy an ELK stack with Ansible, optionally against an OpenStack cloud.
+Deploy a continuous integration reference architecture with Jenkins to test
+OpenStack with [TripleO
+Quickstart](https://github.com/openstack/tripleo-quickstart).
+
 
 ## Requirements
 
@@ -36,11 +39,11 @@ groups and rules for you. It is assumed you've created the following sets of
 security groups, and opened the corresponding ports:
 
 * elasticsearch
-  * TCP: 9200
+  * `TCP: 9200`
 * filebeat-input
-  * TCP: 5440
+  * `TCP: 5440`
 * web_ports
-  * TCP: 80, 443
+  * `TCP: 80, 443`
 
 After configuration, you can run the following comment which will connect to
 localhost to run the `shade` applications, authenticate to the OpenStack API
