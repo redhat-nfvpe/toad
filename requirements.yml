@@ -1,0 +1,10 @@
+---
+- src: geerlingguy.repo-epel
+- src: https://github.com/leifmadsen/ansible-role-elasticsearch.git
+  version: master
+  name: leifmadsen.elasticsearch
+- src: https://github.com/leifmadsen/ansible-role-logstash.git
+  version: master
+  name: leifmadsen.logstash
+- src: geerlingguy.nginx
+- src: leifmadsen.kibana-4

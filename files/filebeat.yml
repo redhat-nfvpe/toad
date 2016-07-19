@@ -1,0 +1,21 @@
+filebeat:
+  prospectors:
+    -
+      paths:
+        - /home/jenkins/jenkins-agent/workspace/tripleo-artifact-deploy-test/job_*.log
+      input_type: log
+      document_type: "ansible"
+      include_lines: [ '(^PLAY RECAP.+)', '(^TASK.+)', '(^task path.+)', '(Monday)|(Tuesday)|(Wednesday)|(Thursday)|(Friday)|(Saturday)|(Sunday)', '(^ok\:.+)', '(^skipping\:.+)', '(^failed\:.+)', '(^included\:.+)', '(^changed\:.+)' ]
+  registry_file: /var/lib/filebeat/registry
+output:
+  logstash:
+    hosts: ["10.10.0.1:5044"]
+shipper:
+logging:
+  level: debug
+  to_files: true
+  to_syslog: false
+  files:
+    path: /var/log/mybeat
+    name: mybeat.log
+    keepfiles: 7

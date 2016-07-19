@@ -1,0 +1,32 @@
+input {
+  beats {
+    port => 5044
+    codec => multiline {
+      pattern => "(^task path.+)|(^%{DAY}.+)|(^ok:.+)|(^skipping:.+)|(^failed:.+)|(^included:.+)|(^changed:.+)|(^fatal:.+)"
+      what => "previous"
+      auto_flush_interval => 3600
+    }
+  }
+}
+
+filter {
+    mutate {
+      gsub => ['message', "\n", " "]
+    }
+
+    grok {
+      match => [ "message", "%{WORD}\s\[(?<task_name>.*?)\]\s+(?:[*]+)?(?:\:\s+)?(?:\s.*?%{UNIXPATH:task_path})?\s+(?<task_date>%{DAY} [\d]+ [\w]+ [\d]+)\s+%{TIME:task_time}\s+(?<tz_offset>\+\d+)\s+\((?<task_execution_time>.*?)\)\s+%{TIME:total_execution_time}(?:\s+[*]+\s+)?(?:(?<task_result>\w+)\:\s+\[(?<task_location>.*?)\](?:\:\s+)?(?:\s\=\>\s)?(%{GREEDYDATA:task_data}))?" ]
+      add_tag => [ "grokked" ]
+    }
+}
+
+output {
+#  stdout {
+#    codec => line { format => "%{message}" }
+#    codec => rubydebug 
+#  }
+
+  elasticsearch {
+    hosts => ["{{ elasticsearch_network_address }}:{{ elasticsearch_http_port }}"]
+  }
+}
