@@ -12,6 +12,9 @@ jenkins_plugins:
   - xtrigger
   - groovy
 
+jenkins_job_builder_config_jenkins_url: http://localhost:8080
+jenkins_job_builder_file_jobs_src: /tmp/cira-job-configs
+
 logstash_configuration_files:
   - 03-beats.conf
 

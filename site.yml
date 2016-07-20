@@ -1,3 +1,4 @@
+# vim: set ft=ansible
 # main.yml
 ---
 
@@ -8,11 +9,22 @@
 - hosts: jenkins_master
   vars_files:
     - vars/main.yml
+    - ~/.ansible/vars/cira_vars.yml
+
+  pre_tasks:
+    - name: Locally clone Jenkins jobs
+      git:
+        repo: "{{ jenkins_job_builder_git_jobs_src }}"
+        dest: "{{ jenkins_job_builder_file_jobs_src }}"
+        version: HEAD
+        force: yes
+      delegate_to: localhost
+      changed_when: false
 
   roles:
     - { role: 'geerlingguy.nginx' }
     - { role: 'geerlingguy.jenkins' }
-    - { role: 'openstack.jenkins-job-builder' }
+    - { role: 'leifmadsen.jenkins-job-builder' }
 
   post_tasks:
     - name: Validate SELinux is enabled
