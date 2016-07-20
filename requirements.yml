@@ -9,3 +9,6 @@
 - src: geerlingguy.nginx
 - src: leifmadsen.kibana-4
 - src: geerlingguy.jenkins
+- src: https://github.com/openstack/ansible-role-jenkins-job-builder.git
+  version: master
+  name: openstack.jenkins-job-builder

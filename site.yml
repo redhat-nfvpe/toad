@@ -12,6 +12,7 @@
   roles:
     - { role: 'geerlingguy.nginx' }
     - { role: 'geerlingguy.jenkins' }
+    - { role: 'openstack.jenkins-job-builder' }
 
   post_tasks:
     - name: Validate SELinux is enabled
