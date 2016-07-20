@@ -31,6 +31,21 @@ that directory (adjust to your own cloud connection):
                 password: cloud_pass
                 project_name: "My Cloud Project"
 
+## Overrides / Private Info
+
+There may be some variables you don't want to expose into a Git repo. You can
+store those in the `~/.ansible/vars/cira_vars.yml` file. For example, the
+following variables are being utilized by the author:
+
+* cloud_name_prefix
+* cloud_name
+* cloud_region_name
+* cloud_availability_zone
+* cloud_image
+* cloud_flavor
+* cloud_key_name
+* jenkins_job_builder_git_jobs_src
+
 ## Deployment
 
 You may need to adjust the `host_vars/localhost` file to adjust the
