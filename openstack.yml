@@ -3,7 +3,7 @@
   hosts: localhost
   gather_facts: false
   vars_files:
-    - ~/.ansible/vars/elk_vars.yml
+    - ~/.ansible/vars/cira_vars.yml
 
   tasks:
     - name: Deploy an instance

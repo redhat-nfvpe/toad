@@ -5,6 +5,35 @@
 - include: openstack.yml
   when: use_openstack_deploy
 
+- hosts: jenkins_master
+  vars_files:
+    - vars/main.yml
+
+  roles:
+    - { role: 'geerlingguy.nginx' }
+    - { role: 'geerlingguy.jenkins' }
+
+  post_tasks:
+    - name: Validate SELinux is enabled
+      selinux:
+        policy: targeted
+        state: enforcing
+
+    - name: SELinux -- Enable httpd_can_network_connect
+      seboolean:
+        name: httpd_can_network_connect
+        state: yes
+        persistent: yes
+
+    - name: Copy Jenkins Nginx Configuration
+      template:
+        src: jenkins_master-vhost.conf.j2
+        dest: /etc/nginx/conf.d/jenkins_master.conf
+        owner: root
+        group: root
+        mode: 0644
+      notify: restart nginx
+
 - hosts: elasticsearch
   vars_files:
     - vars/main.yml
@@ -41,6 +70,12 @@
         state: yes
         persistent: yes
 
+- hosts: all
+  post_tasks:
     - name: Where is Kibana located?
       debug:
         msg: "Kibana can be reached at http://{{hostvars['kibana']['ansible_host']}}"
+
+    - name: Where is Jenkins Master located?
+      debug:
+        msg: "Jenkins Master can be reached at http://{{hostvars['jenkins_master']['ansible_host']}}"

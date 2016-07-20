@@ -8,3 +8,4 @@
   name: leifmadsen.logstash
 - src: geerlingguy.nginx
 - src: leifmadsen.kibana-4
+- src: geerlingguy.jenkins

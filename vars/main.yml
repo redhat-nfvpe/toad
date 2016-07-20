@@ -1,6 +1,17 @@
 # Variables setup for use in site.yml run.
 # Use host_vars/ or group_vars/ for openstack.yml setup.
 
+jenkins_master_server_name: ci.example.tld
+jenkins_master_nginx_access_log: /var/log/nginx/jenkins.access.log
+jenkins_repo_url: http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
+jenkins_plugins:
+  - build-timeout
+  - scp
+  - credentials-binding
+  - ssh-slaves
+  - xtrigger
+  - groovy
+
 logstash_configuration_files:
   - 03-beats.conf
 
@@ -9,4 +20,4 @@ elasticsearch_script_index: false
 elasticsearch_http_port: 9200
 elasticsearch_network_address: "{{ hostvars['elasticsearch']['ansible_eth0']['ipv4']['address'] }}"
 elasticsearch_url: http://{{ elasticsearch_network_address }}:{{ elasticsearch_http_port }}
-elasticsearch_network_host: _eth0:ipv4
+elasticsearch_network_host: 0.0.0.0

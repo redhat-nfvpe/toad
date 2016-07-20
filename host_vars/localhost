@@ -4,3 +4,14 @@ instance_list:
   - { name: elasticsearch, security_groups: "default,elasticsearch" }
   - { name: logstash, security_groups: "default,filebeat-input" }
   - { name: kibana, security_groups: "default,web_ports" }
+  - { name: jenkins_master, security_groups: "default,web_ports" }
+
+jenkins_plugins:
+  - build-timeout
+  - scp
+  - credentials-binding
+  - ssh-slaves
+  - xtrigger
+  - groovy
+
+jenkins_repo_url: http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
