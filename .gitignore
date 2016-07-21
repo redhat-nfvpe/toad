@@ -1,4 +1,4 @@
 *.retry
 roles/
 inventory
-jenkins_jobs/
+files/jobs/
