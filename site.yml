@@ -27,6 +27,11 @@
     - { role: 'leifmadsen.jenkins-job-builder' }
 
   post_tasks:
+    - name: Results of JJB reload
+      debug:
+        var: reload_jenkins_jobs_result.stderr
+      when: reload_jenkins_jobs_result is defined
+
     - name: Validate SELinux is enabled
       selinux:
         policy: targeted
