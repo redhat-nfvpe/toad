@@ -21,7 +21,6 @@
       delegate_to: localhost
       changed_when: false
 
-  pre_tasks:
     - name: Locally clone Jenkins job configs
       git:
         repo: "{{ jenkins_job_config_git_src }}"
