@@ -21,6 +21,15 @@
       delegate_to: localhost
       changed_when: false
 
+    - name: Locally clone Jenkins job configs
+      git:
+        repo: "{{ jenkins_job_config_git_src }}"
+        dest: "{{ jenkins_job_config_file_src }}"
+        version: HEAD
+        force: yes
+      delegate_to: localhost
+      changed_when: false
+
   roles:
     - { role: 'geerlingguy.nginx' }
     - { role: 'geerlingguy.jenkins' }
