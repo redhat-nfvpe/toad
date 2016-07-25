@@ -21,6 +21,25 @@
       delegate_to: localhost
       changed_when: false
 
+    - name: Locally clone Jenkins job configs
+      git:
+        repo: "{{ jenkins_job_config_git_src }}"
+        dest: "{{ jenkins_job_config_file_src }}"
+        version: HEAD
+        force: yes
+      delegate_to: localhost
+      changed_when: false
+
+    - name: Create folder to store images
+      file: path={{ jenkins_images_dest }} state=directory mode=0755 owner=jenkins group=jenkins
+      delegate_to: localhost
+
+    - name: Download osp images locally
+      get_url: url={{ item.target }} dest="{{ jenkins_images_dest }}/{{ item.name }}"
+      with_items: "{{ osp_images }}"
+      delegate_to: localhost
+      changed_when: false
+
   roles:
     - { role: 'geerlingguy.nginx' }
     - { role: 'geerlingguy.jenkins' }
