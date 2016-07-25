@@ -27,8 +27,4 @@ elasticsearch_network_address: "{{ hostvars['elasticsearch']['ansible_eth0']['ip
 elasticsearch_url: http://{{ elasticsearch_network_address }}:{{ elasticsearch_http_port }}
 elasticsearch_network_host: 0.0.0.0
 
-osp_images:
-  - { name: 'osp8_ironic-python-agent.tar', target: 'http://rhos-release.virt.bos.redhat.com/ci-images/rhos-8/current-passed-ci/ironic-python-agent.tar' }
-  - { name: 'osp8_undercloud.qcow2', target: 'http://rhos-release.virt.bos.redhat.com/ci-images/rhos-8/current-passed-ci/undercloud.qcow2' }
-  - { name: 'osp8_overcloud-full.tar', target: 'http://rhos-release.virt.bos.redhat.com/ci-images/rhos-8/current-passed-ci/overcloud-full.tar' }
 jenkins_images_dest: /var/lib/jenkins/userContent/images
