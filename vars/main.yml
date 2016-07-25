@@ -15,6 +15,7 @@ jenkins_plugins:
 jenkins_job_builder_config_jenkins_url: http://localhost:8080
 jenkins_job_builder_file_jobs_src: ./files/jobs
 jenkins_job_builder_config_job_builder_recursive: True
+jenkins_job_config_file_src: /var/lib/jenkins/userContent/config
 
 logstash_configuration_files:
   - 03-beats.conf
@@ -25,3 +26,5 @@ elasticsearch_http_port: 9200
 elasticsearch_network_address: "{{ hostvars['elasticsearch']['ansible_eth0']['ipv4']['address'] }}"
 elasticsearch_url: http://{{ elasticsearch_network_address }}:{{ elasticsearch_http_port }}
 elasticsearch_network_host: 0.0.0.0
+
+jenkins_images_dest: /var/lib/jenkins/userContent/images
