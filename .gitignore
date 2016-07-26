@@ -2,3 +2,4 @@
 roles/
 inventory
 files/jobs/
+files/nfv_jobs_config/

@@ -21,6 +21,29 @@
       delegate_to: localhost
       changed_when: false
 
+    - name: Create folder to store config
+      file:
+        path={{ jenkins_job_config_file_src }}
+        state=directory
+        mode=0755
+        owner=jenkins
+        group=jenkins
+
+    - name: Locally clone Jenkins job configs
+      git:
+        repo: "{{ jenkins_job_config_git_src }}"
+        dest: "./files/nfv_jobs_config"
+        version: HEAD
+        force: yes
+      delegate_to: localhost
+      changed_when: false
+
+    - name: Synchronize job config to remote server
+      synchronize:
+        src="./files/nfv_jobs_config"
+        dest="{{ jenkins_job_config_file_src }}"
+        archive=yes
+
   roles:
     - { role: 'geerlingguy.nginx' }
     - { role: 'geerlingguy.jenkins' }

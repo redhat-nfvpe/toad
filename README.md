@@ -45,6 +45,7 @@ following variables are being utilized by the author:
 * cloud_flavor
 * cloud_key_name
 * jenkins_job_builder_git_jobs_src
+* jenkins_job_config_git_src
 
 ## Deployment
 
