@@ -11,11 +11,13 @@ jenkins_plugins:
   - ssh-slaves
   - xtrigger
   - groovy
+  - copy-to-slave
 
 jenkins_job_builder_config_jenkins_url: http://localhost:8080
 jenkins_job_builder_file_jobs_src: ./files/jobs
 jenkins_job_builder_config_job_builder_recursive: True
 jenkins_job_config_file_src: /var/lib/jenkins/userContent/config
+jenkins_job_builder_handler_check_retries: 10
 
 logstash_configuration_files:
   - 03-beats.conf
