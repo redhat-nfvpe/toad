@@ -12,6 +12,8 @@
     - ~/.ansible/vars/cira_vars.yml
 
   pre_tasks:
+    - include: requiretty.yml
+
     - name: Locally clone Jenkins jobs
       git:
         repo: "{{ jenkins_job_builder_git_jobs_src }}"
@@ -40,7 +42,7 @@
 
     - name: Synchronize job config to remote server
       synchronize:
-        src="./files/nfv_jobs_config"
+        src="./files/nfv_jobs_config/logs"
         dest="{{ jenkins_job_config_file_src }}"
         archive=yes
 
