@@ -55,10 +55,10 @@
     - name: Add jenkins user to wheel group
       user:
         name: jenkins
-	home: /var/lib/jenkins
+        home: /var/lib/jenkins
         groups: wheel
         append: yes
-	shell: /bin/bash
+        shell: /bin/bash
 
     - name: Update ownership and perms for shadow
       file:
