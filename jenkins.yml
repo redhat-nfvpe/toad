@@ -1,0 +1,185 @@
+# vim: ft=ansible
+---
+- hosts: jenkins_master
+  vars_files:
+    - "{{ inventory_dir  }}/../vars/main.yml"
+    - ~/.ansible/vars/cira_vars.yml
+
+  pre_tasks:
+    - include: requiretty.yml
+
+    - name: Locally clone Jenkins jobs
+      git:
+        repo: "{{ jenkins_job_builder_git_jobs_src }}"
+        dest: "{{ jenkins_job_builder_file_jobs_src }}"
+        version: master
+        force: yes
+      delegate_to: localhost
+      changed_when: false
+
+    - name: Create folder to store config
+      file:
+        path={{ jenkins_job_config_file_src }}
+        state=directory
+        mode=0755
+        owner=jenkins
+        group=jenkins
+
+    - name: Locally clone Jenkins job configs
+      git:
+        repo: "{{ jenkins_job_config_git_src }}"
+        dest: "./files/nfv_jobs_config"
+        version: master
+        force: yes
+      delegate_to: localhost
+      changed_when: false
+
+    - name: Synchronize job config to remote server
+      synchronize:
+        src="./files/nfv_jobs_config/"
+        dest="{{ jenkins_job_config_file_src }}"
+        archive=yes
+
+  roles:
+    - { role: 'geerlingguy.nginx' }
+    - { role: 'geerlingguy.jenkins' }
+    - { role: 'leifmadsen.jenkins-job-builder' }
+
+  post_tasks:
+    - name: Add jenkins user to wheel group
+      user:
+        name: jenkins
+        home: /var/lib/jenkins
+        groups: wheel
+        append: yes
+        shell: /bin/bash
+
+    - name: Update ownership and perms for shadow
+      file:
+        group: wheel
+        mode: 0040
+        path: /etc/shadow
+
+    - name: Create admin user in system
+      user:
+        name: "{{ jenkins_job_builder_config_jenkins_user }}"
+        password: "{{ jenkins_job_builder_config_jenkins_password |password_hash('sha512')}}"
+        shell: /bin/bash
+
+    - name: Results of JJB reload
+      debug:
+        var: reload_jenkins_jobs_result.stderr
+      when: reload_jenkins_jobs_result is defined
+
+    - name: Validate SELinux is enabled
+      selinux:
+        policy: targeted
+        state: enforcing
+
+    - name: SELinux -- Enable httpd_can_network_connect
+      seboolean:
+        name: httpd_can_network_connect
+        state: yes
+        persistent: yes
+
+    - name: Copy Jenkins Nginx Configuration
+      template:
+        src: jenkins_master-vhost.conf.j2
+        dest: /etc/nginx/conf.d/jenkins_master.conf
+        owner: root
+        group: root
+        mode: 0644
+      notify: restart nginx
+
+    - name: Automate jenkins configuration
+      template:
+        src: "{{item.src}}"
+        dest: "{{item.dest}}"
+        owner: "{{item.owner}}"
+        group: "{{item.group}}"
+        mode: "{{item.mode}}"
+      notify: restart jenkins
+      with_items:
+        - src: jenkins_config/config.xml.j2
+          dest: /var/lib/jenkins/config.xml
+          owner: jenkins
+          group: jenkins
+          mode: 0644
+        - src: jenkins_config/credentials.xml.j2
+          dest: /var/lib/jenkins/credentials.xml
+          owner: jenkins
+          group: jenkins
+          mode: 0644
+        - src: jenkins_config/be.certipost.hudson.plugin.SCPRepositoryPublisher.xml.j2
+          dest: /var/lib/jenkins/be.certipost.hudson.plugin.SCPRepositoryPublisher.xml
+          owner: jenkins
+          group: jenkins
+          mode: 0644
+
+    - name: Create Jenkins user .ssh directory
+      file:
+        path: "{{ jenkins_master_ssh_directory }}"
+        state: directory
+        owner: jenkins
+        group: jenkins
+        mode: 0700
+
+    - name: Generate SSH keypair
+      command: ssh-keygen -N '' -f {{ jenkins_master_ssh_directory }}/id_rsa
+      args:
+        creates: "{{ jenkins_master_ssh_directory }}/id_rsa"
+
+    - name: Validate correct permissions on SSH keys
+      file:
+        path: "{{ jenkins_master_ssh_directory }}/{{ item.filename }}"
+        owner: jenkins
+        group: jenkins
+        mode: "{{ item.mode }}"
+      with_items:
+        - { filename: id_rsa, mode: 0400 }
+        - { filename: id_rsa.pub, mode: 0664 }
+
+    - name: Get public SSH key contents
+      command: cat {{ jenkins_master_ssh_directory }}/id_rsa.pub
+      register: jenkins_master_pub
+      tags:
+        # Skip ANSIBLE0012. We want to validate our public key is copied over.
+        - skip_ansible_lint
+
+- hosts: jenkins_slave
+  tasks:
+
+    # TODO: this is a work around because I haven't figured out how to properly
+    #       access the registered hostvars on the jenkins_master.
+    - name: Set fact containing the jenkins_master SSH public key
+      set_fact:
+        jenkins_master_pub: "{{ hostvars[item].jenkins_master_pub.stdout }}"
+      with_inventory_hostnames: jenkins_master
+      tags:
+        # Skip ANSIBLE0015. Use of bare variable jenkins_master is correct.
+        - skip_ansible_lint
+
+    - name: Create jenkins user
+      become: yes
+      user:
+        name: jenkins
+        comment: "Jenkins Slave User"
+        generate_ssh_key: yes
+
+    - name: Get contents of jenkins public key
+      become: yes
+      command: cat /home/jenkins/.ssh/id_rsa.pub
+      register: jenkins_slave_pub
+      tags:
+        # Skip ANSIBLE0012. We want to validate our public key is copied over.
+        - skip_ansible_lint
+
+    - name: Add authorized host keys to authorized_keys
+      become: yes
+      become_user: jenkins
+      authorized_key:
+        user: jenkins
+        key: "{{ item }}"
+      with_items:
+      - "{{ jenkins_master_pub }}"
+      - "{{ jenkins_slave_pub.stdout }}"
