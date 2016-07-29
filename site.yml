@@ -12,7 +12,7 @@
 # Include the ELK stack playbook
 - include: elk.yml
 
-# Information Block
+# Section that provides post-installation information
 - hosts: kibana
   post_tasks:
     - name: Where is Kibana located?
