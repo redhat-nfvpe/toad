@@ -18,7 +18,7 @@
       git:
         repo: "{{ jenkins_job_builder_git_jobs_src }}"
         dest: "{{ jenkins_job_builder_file_jobs_src }}"
-        version: HEAD
+        version: master
         force: yes
       delegate_to: localhost
       changed_when: false
@@ -35,7 +35,7 @@
       git:
         repo: "{{ jenkins_job_config_git_src }}"
         dest: "./files/nfv_jobs_config"
-        version: HEAD
+        version: master
         force: yes
       delegate_to: localhost
       changed_when: false
@@ -131,7 +131,7 @@
         mode: 0700
 
     - name: Generate SSH keypair
-      shell: ssh-keygen -N '' -f {{ jenkins_master_ssh_directory }}/id_rsa
+      command: ssh-keygen -N '' -f {{ jenkins_master_ssh_directory }}/id_rsa
       args:
         creates: "{{ jenkins_master_ssh_directory }}/id_rsa"
 
@@ -146,17 +146,24 @@
         - { filename: id_rsa.pub, mode: 0664 }
 
     - name: Get public SSH key contents
-      shell: cat {{ jenkins_master_ssh_directory }}/id_rsa.pub
+      command: cat {{ jenkins_master_ssh_directory }}/id_rsa.pub
       register: jenkins_master_pub
+      tags:
+        # Skip ANSIBLE0012. We want to validate our public key is copied over.
+        - skip_ansible_lint
 
 - hosts: jenkins_slave
   tasks:
 
     # TODO: this is a work around because I haven't figured out how to properly
     #       access the registered hostvars on the jenkins_master.
-    - set_fact:
+    - name: Set fact containing the jenkins_master SSH public key
+      set_fact:
         jenkins_master_pub: "{{ hostvars[item].jenkins_master_pub.stdout }}"
       with_inventory_hostnames: jenkins_master
+      tags:
+        # Skip ANSIBLE0015. Use of bare variable jenkins_master is correct.
+        - skip_ansible_lint
 
     - name: Create jenkins user
       become: yes
@@ -167,8 +174,11 @@
 
     - name: Get contents of jenkins public key
       become: yes
-      shell: cat /home/jenkins/.ssh/id_rsa.pub
+      command: cat /home/jenkins/.ssh/id_rsa.pub
       register: jenkins_slave_pub
+      tags:
+        # Skip ANSIBLE0012. We want to validate our public key is copied over.
+        - skip_ansible_lint
 
     - name: Add authorized host keys to authorized_keys
       become: yes

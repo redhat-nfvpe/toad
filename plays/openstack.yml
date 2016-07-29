@@ -38,6 +38,7 @@
       retries: 300
       delay: 5
       with_items: "{{ instances.results }}"
+      when: item.changed
 
     - name: Add host to inventory
       add_host:
