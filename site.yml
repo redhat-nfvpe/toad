@@ -77,23 +77,25 @@
         mode: 0644
       notify: restart nginx
 
-    - name: Bring jenkins configuration
+    - name: Automate jenkins configuration
       template:
-        src: jenkins_config/config.xml.j2
-        dest: /var/lib/jenkins/config.xml
-        owner: jenkins
-        group: jenkins
-        mode: 0644
+        src: "{{item.src}}"
+        dest: "{{item.dest}}"
+        owner: "{{item.owner}}"
+        group: "{{item.group}}"
+        mode: "{{item.mode}}"
       notify: restart jenkins
-
-    - name: Autoconfigure jenkins plugins
-      template:
-        src: jenkins_config/be.certipost.hudson.plugin.SCPRepositoryPublisher.xml.j2
-        dest: /var/lib/jenkins/be.certipost.hudson.plugin.SCPRepositoryPublisher.xml
-        owner: jenkins
-        group: jenkins
-        mode: 0644
-      notify: restart jenkins
+      with_items:
+        - src: jenkins_config/config.xml.j2
+          dest: /var/lib/jenkins/config.xml
+          owner: jenkins
+          group: jenkins
+          mode: 0644
+        - src: jenkins_config/be.certipost.hudson.plugin.SCPRepositoryPublisher.xml.j2
+          dest: /var/lib/jenkins/be.certipost.hudson.plugin.SCPRepositoryPublisher.xml
+          owner: jenkins
+          group: jenkins
+          mode: 0644
 
     - name: Create Jenkins user .ssh directory
       file:
