@@ -77,6 +77,15 @@
         mode: 0644
       notify: restart nginx
 
+    - name: Autoconfigure jenkins plugins
+      template:
+        src: jenkins_config/be.certipost.hudson.plugin.SCPRepositoryPublisher.xml.j2
+        dest: /var/lib/jenkins/be.certipost.hudson.plugin.SCPRepositoryPublisher.xml
+        owner: jenkins
+        group: jenkins
+        mode: 0644
+      notify: restart jenkins
+
 - hosts: elasticsearch
   vars_files:
     - vars/main.yml

@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<be.certipost.hudson.plugin.SCPRepositoryPublisher_-DescriptorImpl plugin="scp@1.8">
+  <sites>
+    {% for site in jenkins_scp_sites %}
+  <be.certipost.hudson.plugin.SCPSite>
+    <hostname>{{ site.hostname }}</hostname>
+    <port>{{ site.port | default(22) }}</port>
+    <username>{{ site.user | default('jenkins') }}</username>
+    <password>{% if site.password is defined %}{{ site.password }}{% endif %}</password>
+    <keyfile>{% if site.keyfile is defined %}{{ site.keyfile | default('/var/lib/jenkins/.ssh/id_rsa') }}{% endif %}</keyfile>
+    <rootRepositoryPath>{{ site.path }}</rootRepositoryPath>
+  </be.certipost.hudson.plugin.SCPSite>
+  {% endfor %}
+  </sites>
+</be.certipost.hudson.plugin.SCPRepositoryPublisher_-DescriptorImpl>

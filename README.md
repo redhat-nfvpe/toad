@@ -46,6 +46,7 @@ following variables are being utilized by the author:
 * cloud_key_name
 * jenkins_job_builder_git_jobs_src
 * jenkins_job_config_git_src
+* jenkins_scp_sites
 
 ## Deployment
 
@@ -64,3 +65,21 @@ security groups, and opened the corresponding ports:
 After configuration, you can run the following comment which will connect to
 localhost to run the `shade` applications, authenticate to the OpenStack API
 you've supplied in `cloud.yml` and then deploy the stack.
+
+
+## Configure Jenkins plugins
+
+In order to configure `scp` plugin, you'll need to use the `jenkins_scp_sites`
+var. It expects a list of sites where Jenkins will copy the artifacts from
+the jobs. Format is the following: ::
+
+  jenkins_scp_sites:
+    - hostname: test_hostname
+      user: jenkins1
+      password: abc
+      path: /test/path
+    - hostname: test_hostname
+      port: 23
+      user: jenkins1
+      keyfile: abc
+    path: /test/path
