@@ -8,6 +8,7 @@ install:
     - pip install ansible
     - pip install ansible-lint
 script:
+    - ansible-galaxy install -r requirements.yml
     - ansible-playbook --syntax-check elk.yml
     - ansible-playbook --syntax-check jenkins.yml
     - ansible-playbook --syntax-check openstack.yml

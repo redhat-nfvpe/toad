@@ -1,5 +1,7 @@
 # ansible-cira
 
+[![Build Status](https://travis-ci.org/redhat-nfvpe/ansible-cira.svg?branch=master)](https://travis-ci.org/redhat-nfvpe/ansible-cira)
+
 Deploy a continuous integration reference architecture with Jenkins to test
 OpenStack with [TripleO
 Quickstart](https://github.com/openstack/tripleo-quickstart).
