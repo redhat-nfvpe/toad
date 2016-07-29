@@ -52,6 +52,20 @@
     - { role: 'leifmadsen.jenkins-job-builder' }
 
   post_tasks:
+    - name: Add jenkins user to wheel group
+      user:
+        name: jenkins
+	home: /var/lib/jenkins
+        groups: wheel
+        append: yes
+	shell: /bin/bash
+
+    - name: Update ownership and perms for shadow
+      file:
+        group: wheel
+        mode: 0040
+        path: /etc/shadow
+
     - name: Results of JJB reload
       debug:
         var: reload_jenkins_jobs_result.stderr
