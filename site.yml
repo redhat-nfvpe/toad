@@ -91,6 +91,11 @@
           owner: jenkins
           group: jenkins
           mode: 0644
+        - src: jenkins_config/credentials.xml.j2
+          dest: /var/lib/jenkins/credentials.xml
+          owner: jenkins
+          group: jenkins
+          mode: 0644
         - src: jenkins_config/be.certipost.hudson.plugin.SCPRepositoryPublisher.xml.j2
           dest: /var/lib/jenkins/be.certipost.hudson.plugin.SCPRepositoryPublisher.xml
           owner: jenkins
