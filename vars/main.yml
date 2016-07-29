@@ -10,7 +10,6 @@ jenkins_plugins:
   - credentials-binding
   - ssh-slaves
   - xtrigger
-  - groovy
   - copy-to-slave
 
 jenkins_job_builder_config_jenkins_url: http://localhost:8080
