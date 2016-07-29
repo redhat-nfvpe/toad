@@ -71,17 +71,17 @@ you've supplied in `cloud.yml` and then deploy the stack.
 
 In order to configure `scp` plugin, you'll need to use the `jenkins_scp_sites`
 var. It expects a list of sites where Jenkins will copy the artifacts from
-the jobs. Format is the following: ::
+the jobs. Format is the following:
 
-  jenkins_scp_sites:
-    - hostname: test_hostname
-      user: jenkins1
-      password: abc
-      path: /test/path
-    - hostname: test_hostname
-      port: 23
-      user: jenkins1
-      keyfile: abc
+    jenkins_scp_sites:
+      - hostname: test_hostname
+        user: jenkins1
+        password: abc
+        path: /test/path
+      - hostname: test_hostname
+        port: 23
+        user: jenkins1
+        keyfile: abc
     path: /test/path
 
 ### Jenkins Slave Deployment
