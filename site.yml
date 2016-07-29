@@ -8,7 +8,7 @@
 
 - hosts: jenkins_master
   vars_files:
-    - ["./vars/main.yml", "../vars/main.yml"]
+    - "{{ inventory_dir }}/../vars/main.yml"
     - ~/.ansible/vars/cira_vars.yml
 
   pre_tasks:
@@ -182,7 +182,7 @@
 
 - hosts: elasticsearch
   vars_files:
-    - vars/main.yml
+    - "{{ inventory_dir }}/../vars/main.yml"
 
   roles:
     - { role: 'geerlingguy.repo-epel' }
@@ -190,7 +190,7 @@
 
 - hosts: logstash
   vars_files:
-    - vars/main.yml
+    - "{{ inventory_dir }}/../vars/main.yml"
 
   roles:
     - { role: 'geerlingguy.repo-epel' }
@@ -198,7 +198,7 @@
 
 - hosts: kibana
   vars_files:
-    - vars/main.yml
+    - "{{ inventory_dir }}/../vars/main.yml"
   roles:
     - { role: 'geerlingguy.repo-epel' }
     - { role: 'geerlingguy.nginx' }
