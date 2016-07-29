@@ -3,16 +3,16 @@
 ---
 
 # Deploy to OpenStack Servers
-- include: openstack.yml
+- include: plays/openstack.yml
   when: use_openstack_deploy
 
 - hosts: jenkins_master
   vars_files:
-    - vars/main.yml
+    - ["./vars/main.yml", "../vars/main.yml"]
     - ~/.ansible/vars/cira_vars.yml
 
   pre_tasks:
-    - include: requiretty.yml
+    - include: plays/requiretty.yml
 
     - name: Locally clone Jenkins jobs
       git:
