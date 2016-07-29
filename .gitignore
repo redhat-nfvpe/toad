@@ -1,4 +1,6 @@
 *.retry
+hosts/
+!hosts/localhost
 roles/
 inventory
 files/jobs/
