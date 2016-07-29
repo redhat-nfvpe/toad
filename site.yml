@@ -95,6 +95,64 @@
           mode: 0644
       notify: restart jenkins
 
+    - name: Create Jenkins user .ssh directory
+      file:
+        path: "{{ jenkins_master_ssh_directory }}"
+        state: directory
+        owner: jenkins
+        group: jenkins
+        mode: 0700
+
+    - name: Generate SSH keypair
+      shell: ssh-keygen -N '' -f {{ jenkins_master_ssh_directory }}/id_rsa
+      args:
+        creates: "{{ jenkins_master_ssh_directory }}/id_rsa"
+
+    - name: Validate correct permissions on SSH keys
+      file:
+        path: "{{ jenkins_master_ssh_directory }}/{{ item.filename }}"
+        owner: jenkins
+        group: jenkins
+        mode: "{{ item.mode }}"
+      with_items:
+        - { filename: id_rsa, mode: 0400 }
+        - { filename: id_rsa.pub, mode: 0664 }
+
+    - name: Get public SSH key contents
+      shell: cat {{ jenkins_master_ssh_directory }}/id_rsa.pub
+      register: jenkins_master_pub
+
+- hosts: jenkins_slave
+  tasks:
+
+    # TODO: this is a work around because I haven't figured out how to properly
+    #       access the registered hostvars on the jenkins_master.
+    - set_fact:
+        jenkins_master_pub: "{{ hostvars[item].jenkins_master_pub.stdout }}"
+      with_inventory_hostnames: jenkins_master
+
+    - name: Create jenkins user
+      become: yes
+      user:
+        name: jenkins
+        comment: "Jenkins Slave User"
+        generate_ssh_key: yes
+
+    - name: Get contents of jenkins public key
+      become: yes
+      shell: cat /home/jenkins/.ssh/id_rsa.pub
+      register: jenkins_slave_pub
+
+    - name: Add authorized host keys to authorized_keys
+      become: yes
+      become_user: jenkins
+      authorized_key:
+        user: jenkins
+        key: "{{ item }}"
+      with_items:
+      - "{{ jenkins_master_pub }}"
+      - "{{ jenkins_slave_pub.stdout }}"
+
 - hosts: elasticsearch
   vars_files:
     - vars/main.yml

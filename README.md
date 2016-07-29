@@ -4,7 +4,6 @@ Deploy a continuous integration reference architecture with Jenkins to test
 OpenStack with [TripleO
 Quickstart](https://github.com/openstack/tripleo-quickstart).
 
-
 ## Requirements
 
 You'll need to install the `shade` dependency so that you can interact with
@@ -50,7 +49,9 @@ following variables are being utilized by the author:
 
 ## Deployment
 
-You may need to adjust the `host_vars/localhost` file to adjust the
+### Base Deployment
+
+You may need to modify the `host_vars/localhost` file to adjust the
 `security_group` names, as the playbook does not currently create security
 groups and rules for you. It is assumed you've created the following sets of
 security groups, and opened the corresponding ports:
@@ -66,20 +67,38 @@ After configuration, you can run the following comment which will connect to
 localhost to run the `shade` applications, authenticate to the OpenStack API
 you've supplied in `cloud.yml` and then deploy the stack.
 
-
 ## Configure Jenkins plugins
 
 In order to configure `scp` plugin, you'll need to use the `jenkins_scp_sites`
 var. It expects a list of sites where Jenkins will copy the artifacts from
-the jobs. Format is the following: ::
+the jobs. Format is the following:
 
-  jenkins_scp_sites:
-    - hostname: test_hostname
-      user: jenkins1
-      password: abc
-      path: /test/path
-    - hostname: test_hostname
-      port: 23
-      user: jenkins1
-      keyfile: abc
+    jenkins_scp_sites:
+      - hostname: test_hostname
+        user: jenkins1
+        password: abc
+        path: /test/path
+      - hostname: test_hostname
+        port: 23
+        user: jenkins1
+        keyfile: abc
     path: /test/path
+
+### Jenkins Slave Deployment
+
+To deploy a Jenkins slave, you need to have a baremetal machine to connect to.
+You can tell Ansible about this machine by creating a new inventory file in the
+`hosts/` directory. You won't pollute the repository since all inventory files
+except the `hosts/localhost` file as ignored.
+
+Start by creating `hosts/slaves` (or similar) and add your baremetal machine
+with the following template:
+
+    [jenkins_slave]
+    slave01 ansible_host=10.10.1.1 ansible_user=ansible
+
+Add additional fields if necessary. It is assumed that the `ansible` user has
+been previously created, and that you can login either via SSH keys, or provide
+the `--ask-pass` flag to your Ansible run. The `ansible` user is also assumed
+to have been setup with passwordless sudo (unless you add `--ask-become-pass`
+during your Ansible run).
