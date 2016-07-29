@@ -42,7 +42,7 @@
 
     - name: Synchronize job config to remote server
       synchronize:
-        src="./files/nfv_jobs_config"
+        src="./files/nfv_jobs_config/"
         dest="{{ jenkins_job_config_file_src }}"
         archive=yes
 
