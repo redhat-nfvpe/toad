@@ -45,6 +45,8 @@ following variables are being utilized by the author:
 * cloud_image
 * cloud_flavor
 * cloud_key_name
+* jenkins_admin_username
+* jenkins_admin_password
 * jenkins_job_builder_config_jenkins_user
 * jenkins_job_builder_config_jenkins_password
 * jenkins_job_builder_git_jobs_src

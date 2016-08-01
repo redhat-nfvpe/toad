@@ -31,8 +31,8 @@
 
     - name: Create admin user in system
       user:
-        name: "{{ jenkins_job_builder_config_jenkins_user }}"
-        password: "{{ jenkins_job_builder_config_jenkins_password |password_hash('sha512')}}"
+        name: "{{ jenkins_admin_username }}"
+        password: "{{ jenkins_admin_password |password_hash('sha512')}}"
         shell: /bin/bash
 
     - name: Validate SELinux is enabled
