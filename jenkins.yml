@@ -117,16 +117,23 @@
     - ~/.ansible/vars/cira_vars.yml
 
   pre_tasks:
+    - name: Validate Git is installed
+      yum:
+        name: git
+        state: present
+
     - name: config get http.sslVerify
-      command: git config --global --get http.sslVerify
-      register: git_ssl_result
-      changed_when: false
-      always_run: yes
-      ignore_errors: yes
+      git_config:
+        name: http.sslVerify
+        scope: global
+      register: http_sslVerify
 
     - name: config http.sslVerify false
-      command: git config --global http.sslVerify false
-      when: git_ssl_result.stdout != 'false'
+      git_config:
+        name: http.sslVerify
+        scope: global
+        value: false
+      when: http_sslVerify.config_value != 'false'
 
     - name: Locally clone Jenkins jobs
       git:
