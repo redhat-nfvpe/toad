@@ -3,6 +3,9 @@
 
 # Deploy Jenkins Master
 - hosts: jenkins_master
+  tags:
+    - jenkins_master
+
   vars_files:
     - "{{ inventory_dir  }}/../vars/main.yml"
     - ~/.ansible/vars/cira_vars.yml
@@ -12,7 +15,7 @@
 
   roles:
     - { role: 'geerlingguy.nginx' }
-    - { role: 'geerlingguy.jenkins' }
+    - { role: 'leifmadsen.jenkins' }
 
   post_tasks:
     - name: Add jenkins user to wheel group
@@ -112,11 +115,16 @@
 
 # Deploy jobs via JJB
 - hosts: jenkins_master
+  tags:
+    - jenkins_master
+
   vars_files:
     - "{{ inventory_dir  }}/../vars/main.yml"
     - ~/.ansible/vars/cira_vars.yml
 
   pre_tasks:
+    - include: requiretty.yml
+
     - name: Validate Git is installed
       yum:
         name: git
@@ -179,6 +187,8 @@
 
 # Deploy Jenkins Slave
 - hosts: jenkins_slave
+  tags:
+    - jenkins_slave
   tasks:
 
     # TODO: this is a work around because I haven't figured out how to properly
@@ -190,6 +200,12 @@
       tags:
         # Skip ANSIBLE0015. Use of bare variable jenkins_master is correct.
         - skip_ansible_lint
+
+    - name: Ensure libselinux-python is installed
+      become: yes
+      yum:
+        name: libselinux-python
+        state: present
 
     - name: Create jenkins user
       become: yes

@@ -1,6 +1,10 @@
 # vim: ft=ansible
 ---
 - hosts: elasticsearch
+  tags:
+    - elasticsearch
+    - elk
+
   vars_files:
     - "{{ inventory_dir  }}/../vars/main.yml"
 
@@ -9,6 +13,10 @@
     - { role: 'leifmadsen.elasticsearch' }
 
 - hosts: logstash
+  tags:
+    - logstash
+    - elk
+
   vars_files:
     - "{{ inventory_dir  }}/../vars/main.yml"
 
@@ -17,6 +25,10 @@
     - { role: 'leifmadsen.logstash' }
 
 - hosts: kibana
+  tags:
+    - kibana
+    - elk
+
   vars_files:
     - "{{ inventory_dir  }}/../vars/main.yml"
 

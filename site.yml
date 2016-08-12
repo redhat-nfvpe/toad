@@ -14,12 +14,19 @@
 
 # Section that provides post-installation information
 - hosts: kibana
+  tags:
+    - kibana
+    - elk
+
   post_tasks:
     - name: Where is Kibana located?
       debug:
         msg: "Kibana can be reached at http://{{hostvars['kibana']['ansible_host']}}"
 
 - hosts: jenkins_master
+  tags:
+    - jenkins_master
+
   post_tasks:
     - name: Where is Jenkins Master located?
       debug:
