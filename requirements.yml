@@ -8,7 +8,10 @@
   name: leifmadsen.logstash
 - src: geerlingguy.nginx
 - src: leifmadsen.kibana-4
-- src: geerlingguy.jenkins
+- src: https://github.com/leifmadsen/ansible-role-jenkins.git
+  version: master
+  name: leifmadsen.jenkins
 - src: https://github.com/leifmadsen/ansible-role-jenkins-job-builder.git
   version: master
   name: leifmadsen.jenkins-job-builder
+- src: franklinkim.sudo

@@ -1,6 +1,9 @@
 # vim: set ft=ansible
 - name: Deploy on OpenStack
   hosts: localhost
+  tags:
+    - always
+
   gather_facts: false
   vars_files:
     - ~/.ansible/vars/cira_vars.yml
