@@ -2,7 +2,7 @@
 - name: Deploy on OpenStack
   hosts: localhost
   tags:
-    - openstack
+    - always
 
   gather_facts: false
   vars_files:

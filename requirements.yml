@@ -14,3 +14,4 @@
 - src: https://github.com/leifmadsen/ansible-role-jenkins-job-builder.git
   version: master
   name: leifmadsen.jenkins-job-builder
+- src: franklinkim.sudo
