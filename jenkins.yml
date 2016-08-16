@@ -70,6 +70,14 @@
         mode: 0644
       notify: restart nginx
 
+    - name: Create slave results directory
+      file:
+        path: "{{ jenkins_master_results_directory }}"
+        state: directory
+        owner: jenkins
+        group: jenkins
+        mode: 0700
+
     - name: Automate jenkins configuration
       template:
         src: "{{item.src}}"
@@ -203,14 +211,25 @@
 
   vars:
     sudo_defaults:
-      - name: 'jenkins'
-        defaults: '!requiretty'
+      - defaults: '!requiretty'
     sudo_users:
       - name: 'jenkins'
         nopasswd: yes
 
   tags:
     - jenkins_slave
+
+  pre_tasks:
+    - name: Ensure libselinux-python is installed
+      yum:
+        name: libselinux-python
+        state: present
+
+    - name: Create jenkins user
+      user:
+        name: jenkins
+        comment: "Jenkins Slave User"
+        generate_ssh_key: yes
 
   tasks:
     - name: Validate Git is installed
@@ -229,17 +248,6 @@
       tags:
         # Skip ANSIBLE0015. Use of bare variable jenkins_master is correct.
         - skip_ansible_lint
-
-    - name: Ensure libselinux-python is installed
-      yum:
-        name: libselinux-python
-        state: present
-
-    - name: Create jenkins user
-      user:
-        name: jenkins
-        comment: "Jenkins Slave User"
-        generate_ssh_key: yes
 
     - name: Get contents of jenkins public key
       command: cat /home/jenkins/.ssh/id_rsa.pub
@@ -267,7 +275,7 @@
 - hosts: jenkins_master
   become: yes
   tags:
-    - jenkins_slave_test
+    - jenkins_slave
 
   vars_files:
     - ~/.ansible/vars/cira_vars.yml
