@@ -283,8 +283,7 @@
         --username {{ jenkins_admin_username }}
         --password {{ jenkins_admin_password }}
       register: jenkins_cli_get_node
-
-    - debug: var=jenkins_cli_get_node
+      when: slave_name is defined
 
     - name: Deploy template for Jenkins slave node
       template:
