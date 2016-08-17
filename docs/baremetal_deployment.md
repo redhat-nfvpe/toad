@@ -28,7 +28,9 @@ Each hardware environment needs the following content:
 
  - **instackenv.json:** ironic inventory with all the servers to be enrolled is defined here. It needs to follow that schema:
 
+>
 > {
+>
 >     "nodes": [
 >
 >         {
