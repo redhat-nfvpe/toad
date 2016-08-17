@@ -125,6 +125,17 @@
         # Skip ANSIBLE0012. We want to validate our public key is copied over.
         - skip_ansible_lint
 
+    - name: Allow SSH into localhost on the master
+      authorized_key:
+        user: jenkins
+        key: "{{ jenkins_master_pub.stdout }}"
+
+    - name: Add localhost SSH fingerprint to known_hosts
+      known_hosts:
+        name: localhost
+        key: "{{ lookup('pipe', 'ssh-keyscan localhost') }}"
+        state: present
+
 # Deploy jobs via JJB
 - hosts: jenkins_master
   tags:
@@ -201,6 +212,10 @@
   roles:
     - { role: 'franklinkim.sudo' }
 
+  vars_files:
+    - "{{ inventory_dir  }}/../vars/main.yml"
+    - ~/.ansible/vars/cira_vars.yml
+
   vars:
     sudo_defaults:
       - defaults: '!requiretty'
@@ -272,6 +287,14 @@
         user: root
         key: "{{ jenkins_slave_pub.stdout }}"
 
+    - name: Get SSH fingerprint of slave
+      shell: ssh-keyscan $HOSTNAME
+      register: jenkins_slave_ssh_fingerprint
+
+    - name: Get hostname of slave
+      shell: echo $HOSTNAME
+      register: jenkins_slave_ssh_hostname
+
 - hosts: jenkins_master
   become: yes
   tags:
@@ -281,6 +304,27 @@
     - ~/.ansible/vars/cira_vars.yml
 
   tasks:
+
+    - debug: var=hostvars[item]
+      with_inventory_hostnames: jenkins_slave
+
+    - name: Set fact containing the slave SSH fingerprint
+      become: no
+      ignore_errors: yes
+      set_fact:
+        jenkins_slave_ssh_hostname: "{{ hostvars[item].jenkins_slave_ssh_hostname.stdout }}"
+        jenkins_slave_ssh_fingerprint: "{{ hostvars[item].jenkins_slave_ssh_fingerprint.stdout }}"
+      with_inventory_hostnames: jenkins_slave
+      tags:
+        # Skip ANSIBLE0015. Use of bare variable jenkins_master is correct.
+        - skip_ansible_lint
+
+    - name: Add Jenkins slave SSH fingerprint to known hosts
+      known_hosts:
+        name: "{{ jenkins_slave_ssh_hostname }}"
+        key: "{{ jenkins_slave_ssh_fingerprint }}"
+        state: present
+
     # TODO: This is kind of hacky since it doesn't deal with multiple jenkins
     #       slaves. We'll need to circle back and make this deal with lists.
     - name: Check if our node already exists
