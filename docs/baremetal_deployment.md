@@ -30,21 +30,37 @@ Each hardware environment needs the following content:
 
 > {
 >     "nodes": [
+>
 >         {
+>
 >             "mac": [
+>
 >                 "mac-address"
+>
 >             ],
+>
 >             "cpu": "number-of-available-cpus",
+>
 >             "memory": "amount-of-memory-in-mb",
+>
 >             "disk": "amount-of-memory-in-gb",
+>
 >             "arch": "x864_64",
+>
 >             "pm_type": "pxe_ipmitool",
+>
 >             "pm_user": "ipmi_user",
+>
 >             "pm_password": "ipmi_pass",
+>
 >             "pm_addr": "ipmi_address"
+>
 >         }
+>
 >     ]
+>
 > }
+
 
  - **network_configs:** different kind of network configurations can be on that folder. In our case, we are starting with single_nic_vlans
  - **network_configs/single_nic_vlans:** subfolder containing all settings needed for that kind of network deployment on that hardware environment.
