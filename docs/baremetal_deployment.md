@@ -30,7 +30,6 @@ Each hardware environment needs the following content:
 
 >
 > {
->
 >     "nodes": [
 >
 >         {
@@ -62,7 +61,7 @@ Each hardware environment needs the following content:
 >     ]
 >
 > }
-
+>
 
  - **network_configs:** different kind of network configurations can be on that folder. In our case, we are starting with single_nic_vlans
  - **network_configs/single_nic_vlans:** subfolder containing all settings needed for that kind of network deployment on that hardware environment.
