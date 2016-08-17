@@ -70,14 +70,6 @@
         mode: 0644
       notify: restart nginx
 
-    - name: Create slave results directory
-      file:
-        path: "{{ jenkins_master_results_directory }}"
-        state: directory
-        owner: jenkins
-        group: jenkins
-        mode: 0700
-
     - name: Automate jenkins configuration
       template:
         src: "{{item.src}}"
@@ -236,6 +228,14 @@
       yum:
         name: git
         state: present
+
+    - name: Create slave results directory
+      file:
+        path: "{{ jenkins_master_results_directory }}"
+        state: directory
+        owner: jenkins
+        group: jenkins
+        mode: 0700
 
     # TODO: this is a work around because I haven't figured out how to properly
     #       access the registered hostvars on the jenkins_master.
