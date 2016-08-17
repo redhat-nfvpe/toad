@@ -29,6 +29,7 @@ Each hardware environment needs the following content:
  - **instackenv.json:** ironic inventory with all the servers to be enrolled is defined here. It needs to follow that schema:
 
 ```{
+
   "nodes": [
     {
       "mac": [
@@ -45,6 +46,7 @@ Each hardware environment needs the following content:
     }
   ]
 }
+
 ```
 
  - **network_configs:** different kind of network configurations can be on that folder. In our case, we are starting with single_nic_vlans
