@@ -26,6 +26,7 @@ jenkins_job_builder_handler_check_retries: 10
 # Logstash Configuration
 logstash_configuration_files:
   - 03-beats.conf
+logstash_filter_files: []
 
 # ElasticSearch configuration
 elasticsearch_script_inline: false
