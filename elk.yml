@@ -22,6 +22,7 @@
 
   roles:
     - { role: 'geerlingguy.repo-epel' }
+    - { role: 'geerlingguy.java' }
     - { role: 'leifmadsen.logstash' }
 
 - hosts: kibana

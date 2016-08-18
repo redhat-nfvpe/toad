@@ -1,0 +1,16 @@
+# vim: ft=ansible
+---
+
+# Deploy Jenkins Master
+- hosts: jenkins_master
+  tags:
+    - jenkins_master
+    - logging
+
+  vars_files:
+    - "{{ inventory_dir  }}/../vars/main.yml"
+    - ~/.ansible/vars/cira_vars.yml
+
+  roles:
+    - { role: 'torian.filebeat' }
+

@@ -15,3 +15,4 @@
   version: master
   name: leifmadsen.jenkins-job-builder
 - src: franklinkim.sudo
+- src: torian.filebeat
