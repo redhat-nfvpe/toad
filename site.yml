@@ -12,6 +12,9 @@
 # Include the ELK stack playbook
 - include: elk.yml
 
+# Include FileBeat setup
+- include: filebeat.yml
+
 # Section that provides post-installation information
 - hosts: kibana
   tags:
