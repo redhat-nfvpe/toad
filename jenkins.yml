@@ -41,7 +41,7 @@
     - name: Update ownership and perms for shadow
       file:
         group: wheel
-        mode: 0040
+        mode: "0040"
         path: /etc/shadow
 
     - name: Create admin user in system
@@ -67,7 +67,7 @@
         dest: /etc/nginx/conf.d/jenkins_master.conf
         owner: root
         group: root
-        mode: 0644
+        mode: "0644"
       notify: restart nginx
 
     - name: Automate jenkins configuration
@@ -83,17 +83,17 @@
           dest: /var/lib/jenkins/config.xml
           owner: jenkins
           group: jenkins
-          mode: 0644
+          mode: "0644"
         - src: jenkins_config/credentials.xml.j2
           dest: /var/lib/jenkins/credentials.xml
           owner: jenkins
           group: jenkins
-          mode: 0644
+          mode: "0644"
         - src: jenkins_config/be.certipost.hudson.plugin.SCPRepositoryPublisher.xml.j2
           dest: /var/lib/jenkins/be.certipost.hudson.plugin.SCPRepositoryPublisher.xml
           owner: jenkins
           group: jenkins
-          mode: 0644
+          mode: "0644"
 
     - name: Create Jenkins user .ssh directory
       file:
@@ -101,7 +101,7 @@
         state: directory
         owner: jenkins
         group: jenkins
-        mode: 0700
+        mode: "0700"
 
     - name: Generate SSH keypair
       command: ssh-keygen -N '' -f {{ jenkins_master_ssh_directory }}/id_rsa
@@ -130,11 +130,26 @@
         user: jenkins
         key: "{{ jenkins_master_pub.stdout }}"
 
+    - name: Get localhost SSH fingerprint
+      command: ssh-keyscan -4 -t ecdsa-sha2-nistp256 127.0.0.1
+      register: jenkins_master_ssh_fingerprint
+      tags:
+        - skip_ansible_lint
+
     - name: Add localhost SSH fingerprint to known_hosts
+      become_user: jenkins
       known_hosts:
-        name: localhost
-        key: "{{ lookup('pipe', 'ssh-keyscan localhost') }}"
+        name: 127.0.0.1
+        key: "{{ jenkins_master_ssh_fingerprint.stdout }}"
         state: present
+
+    - name: Create slave results directory
+      file:
+        path: "{{ jenkins_master_results_directory }}"
+        state: directory
+        owner: jenkins
+        group: jenkins
+        mode: "0700"
 
 # Deploy jobs via JJB
 - hosts: jenkins_master
@@ -178,7 +193,7 @@
         path: "{{ jenkins_job_config_file_src }}"
         state: directory
         recurse: yes
-        mode: 0755
+        mode: "0755"
         owner: jenkins
         group: jenkins
 
@@ -244,14 +259,6 @@
         name: git
         state: present
 
-    - name: Create slave results directory
-      file:
-        path: "{{ jenkins_master_results_directory }}"
-        state: directory
-        owner: jenkins
-        group: jenkins
-        mode: 0700
-
     # TODO: this is a work around because I haven't figured out how to properly
     #       access the registered hostvars on the jenkins_master.
     - name: Set fact containing the jenkins_master SSH public key
@@ -288,12 +295,16 @@
         key: "{{ jenkins_slave_pub.stdout }}"
 
     - name: Get SSH fingerprint of slave
-      shell: ssh-keyscan $HOSTNAME
+      shell: ssh-keyscan -4 -t ecdsa-sha2-nistp256 $HOSTNAME
       register: jenkins_slave_ssh_fingerprint
+      tags:
+        - skip_ansible_lint
 
     - name: Get hostname of slave
       shell: echo $HOSTNAME
       register: jenkins_slave_ssh_hostname
+      tags:
+        - skip_ansible_lint
 
 - hosts: jenkins_master
   become: yes
@@ -304,10 +315,6 @@
     - ~/.ansible/vars/cira_vars.yml
 
   tasks:
-
-    - debug: var=hostvars[item]
-      with_inventory_hostnames: jenkins_slave
-
     - name: Set fact containing the slave SSH fingerprint
       become: no
       ignore_errors: yes
@@ -320,6 +327,7 @@
         - skip_ansible_lint
 
     - name: Add Jenkins slave SSH fingerprint to known hosts
+      become_user: jenkins
       known_hosts:
         name: "{{ jenkins_slave_ssh_hostname }}"
         key: "{{ jenkins_slave_ssh_fingerprint }}"
