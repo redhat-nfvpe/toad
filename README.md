@@ -21,7 +21,7 @@ For Ansible, several roles are required, and you can install them as follows:
 
 If you're going to install to an OpenStack cloud, you'll need to configure a
 cloud to connect to. You can do this by creating the `~/.config/openstack/`
-directory and placing the following contents into the `cloud.yml` file within
+directory and placing the following contents into the `clouds.yml` file within
 that directory (adjust to your own cloud connection):
 
     clouds:
@@ -73,7 +73,7 @@ Many of the values can be found in your OpenStack RC file, which can typically
 be found in the _Access & Security_ section of the Horizon dashboard.
 
     cloud_name_prefix: redhat                  # virtual machine name prefix
-    cloud_name: mycloud                        # same as specified in cloud.yml
+    cloud_name: mycloud                        # same as specified in clouds.yml
     cloud_region_name: mycloud_region          # OS_REGION_NAME
     cloud_availability_zone: nova              # availability zone
     cloud_image: c0a97bbd-0cdd-4ed1-b6c1-052123456789    # unique image ID
@@ -127,7 +127,7 @@ as follows (as defined in `host_vars/localhost`):
 
 After configuration, you can run the following command which will connect to
 localhost to run the `shade` applications, authenticate to the OpenStack API
-you've supplied in `cloud.yml` and then deploy the stack.
+you've supplied in `clouds.yml` and then deploy the stack.
 
     ansible-playbook site.yml
 
