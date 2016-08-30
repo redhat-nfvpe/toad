@@ -185,6 +185,7 @@
         dest: "{{ jenkins_job_builder_file_jobs_src }}"
         version: master
         force: yes
+        accept_hostkey: yes
       delegate_to: localhost
       changed_when: false
 
@@ -203,6 +204,7 @@
         dest: "./files/nfv_jobs_config"
         version: master
         force: yes
+        accept_hostkey: yes
       delegate_to: localhost
       changed_when: false
 
