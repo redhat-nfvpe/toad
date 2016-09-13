@@ -9,12 +9,14 @@ jenkins_master_results_directory: /srv/static/
 jenkins_repo_url: http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
 jenkins_plugins:
   - build-timeout
-  - scp
-  - credentials-binding
-  - ssh-slaves
-  - xtrigger
   - copy-to-slave
+  - credentials-binding
+  - git
+  - multiple-scms
+  - scp
+  - ssh-slaves
   - ws-cleanup
+  - xtrigger
 jenkins_scp_sites: []
 
 # JJB Configuration
