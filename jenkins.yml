@@ -226,6 +226,7 @@
   become: yes
   roles:
     - { role: 'franklinkim.sudo' }
+    - { role: 'geerlingguy.java' }
 
   vars_files:
     - "{{ inventory_dir  }}/../vars/main.yml"
