@@ -1,7 +1,8 @@
 # vim: ft=ansible
 ---
-
+########################
 # Deploy Jenkins Master
+########################
 - hosts: jenkins_master
   tags:
     - jenkins_master
@@ -30,6 +31,7 @@
         jenkins_admin_password: "{{ jenkins_admin_password }}"
 
   post_tasks:
+    # Operating system configuration and setup
     - name: Add jenkins user to wheel group
       user:
         name: jenkins
@@ -61,6 +63,7 @@
         state: yes
         persistent: yes
 
+    # Copy in configuration for Nginx web proxy fronting Jenkins web UI
     - name: Copy Jenkins Nginx Configuration
       template:
         src: jenkins_master-vhost.conf.j2
@@ -95,54 +98,7 @@
           group: jenkins
           mode: "0644"
 
-    - name: Create Jenkins user .ssh directory
-      file:
-        path: "{{ jenkins_master_ssh_directory }}"
-        state: directory
-        owner: jenkins
-        group: jenkins
-        mode: "0700"
-
-    - name: Generate SSH keypair
-      command: ssh-keygen -N '' -f {{ jenkins_master_ssh_directory }}/id_rsa
-      args:
-        creates: "{{ jenkins_master_ssh_directory }}/id_rsa"
-
-    - name: Validate correct permissions on SSH keys
-      file:
-        path: "{{ jenkins_master_ssh_directory }}/{{ item.filename }}"
-        owner: jenkins
-        group: jenkins
-        mode: "{{ item.mode }}"
-      with_items:
-        - { filename: id_rsa, mode: "0400" }
-        - { filename: id_rsa.pub, mode: "0664" }
-
-    - name: Get public SSH key contents
-      command: cat {{ jenkins_master_ssh_directory }}/id_rsa.pub
-      register: jenkins_master_pub
-      tags:
-        # Skip ANSIBLE0012. We want to validate our public key is copied over.
-        - skip_ansible_lint
-
-    - name: Allow SSH into localhost on the master
-      authorized_key:
-        user: jenkins
-        key: "{{ jenkins_master_pub.stdout }}"
-
-    - name: Get localhost SSH fingerprint
-      command: ssh-keyscan -4 -t ecdsa-sha2-nistp256 127.0.0.1
-      register: jenkins_master_ssh_fingerprint
-      tags:
-        - skip_ansible_lint
-
-    - name: Add localhost SSH fingerprint to known_hosts
-      become_user: jenkins
-      known_hosts:
-        name: 127.0.0.1
-        key: "{{ jenkins_master_ssh_fingerprint.stdout }}"
-        state: present
-
+    # Create directory where results from slave workspaces will be copied to.
     - name: Create slave results directory
       file:
         path: "{{ jenkins_master_results_directory }}"
@@ -151,80 +107,12 @@
         group: jenkins
         mode: "0700"
 
-# Deploy jobs via JJB
-- hosts: jenkins_master
-  tags:
-    - jenkins_master
-
-  vars_files:
-    - "{{ inventory_dir  }}/../vars/main.yml"
-    - ~/.ansible/vars/cira_vars.yml
-
-  pre_tasks:
-    - name: Validate Git is installed
-      yum:
-        name: git
-        state: present
-
-    - name: config get http.sslVerify
-      git_config:
-        name: http.sslVerify
-        scope: global
-      register: http_sslVerify
-
-    - name: config http.sslVerify false
-      git_config:
-        name: http.sslVerify
-        scope: global
-        value: false
-      when: http_sslVerify.config_value != 'false'
-
-    - name: Locally clone Jenkins jobs
-      git:
-        repo: "{{ jenkins_job_builder_git_jobs_src }}"
-        dest: "{{ jenkins_job_builder_file_jobs_src }}"
-        version: master
-        force: yes
-        accept_hostkey: yes
-      delegate_to: localhost
-      changed_when: false
-
-    - name: Create folder to store config
-      file:
-        path: "{{ jenkins_job_config_file_src }}"
-        state: directory
-        recurse: yes
-        mode: "0755"
-        owner: jenkins
-        group: jenkins
-
-    - name: Locally clone Jenkins job configs
-      git:
-        repo: "{{ jenkins_job_config_git_src }}"
-        dest: "./files/nfv_jobs_config"
-        version: master
-        force: yes
-        accept_hostkey: yes
-      delegate_to: localhost
-      changed_when: false
-
-    - name: Synchronize job config to remote server
-      synchronize:
-        src: "./files/nfv_jobs_config/"
-        dest: "{{ jenkins_job_config_file_src }}"
-        archive: yes
-
-  roles:
-    - { role: 'leifmadsen.jenkins-job-builder' }
-
-  post_tasks:
-    - name: Results of JJB reload
-      debug:
-        var: reload_jenkins_jobs_result.stderr
-      when: reload_jenkins_jobs_result is defined
-
+#######################
 # Deploy Jenkins Slave
+#######################
 - hosts: jenkins_slave
+  tags:
+    - jenkins_slave
   become: yes
   roles:
     - { role: 'franklinkim.sudo' }
@@ -240,9 +128,6 @@
     sudo_users:
       - name: 'jenkins'
         nopasswd: yes
-
-  tags:
-    - jenkins_slave
 
   pre_tasks:
     - name: Ensure libselinux-python is installed
@@ -262,53 +147,21 @@
         name: git
         state: present
 
-    # TODO: this is a work around because I haven't figured out how to properly
-    #       access the registered hostvars on the jenkins_master.
-    - name: Set fact containing the jenkins_master SSH public key
-      become: no
-      ignore_errors: yes
-      set_fact:
-        jenkins_master_pub: "{{ hostvars[item].jenkins_master_pub.stdout }}"
-      with_inventory_hostnames: jenkins_master
-      tags:
-        # Skip ANSIBLE0015. Use of bare variable jenkins_master is correct.
-        - skip_ansible_lint
-
-    - name: Get contents of jenkins public key
-      command: cat /home/jenkins/.ssh/id_rsa.pub
-      register: jenkins_slave_pub
-      tags:
-        # Skip ANSIBLE0012. We want to validate our public key is copied over.
-        - skip_ansible_lint
-
-    - name: Add authorized host keys to authorized_keys
-      become_user: jenkins
-      ignore_errors: yes
-      authorized_key:
-        user: jenkins
-        key: "{{ item }}"
-      with_items:
-      - "{{ jenkins_master_pub }}"
-      - "{{ jenkins_slave_pub.stdout }}"
-
-    - name: Add jenkins public key to local root user
-      become: yes
-      authorized_key:
-        user: root
-        key: "{{ jenkins_slave_pub.stdout }}"
-
-    - name: Get SSH fingerprint of slave
-      shell: ssh-keyscan -4 -t ecdsa-sha2-nistp256 $HOSTNAME
-      register: jenkins_slave_ssh_fingerprint
-      tags:
-        - skip_ansible_lint
-
     - name: Get hostname of slave
       shell: echo $HOSTNAME
       register: jenkins_slave_ssh_hostname
       tags:
         - skip_ansible_lint
+        - jenkins_ssh
 
+########################
+# Setup SSH connections
+########################
+- include: jenkins_ssh.yml
+
+###############################
+# Add the slaves to the master
+###############################
 - hosts: jenkins_master
   become: yes
   tags:
@@ -318,24 +171,6 @@
     - ~/.ansible/vars/cira_vars.yml
 
   tasks:
-    - name: Set fact containing the slave SSH fingerprint
-      become: no
-      ignore_errors: yes
-      set_fact:
-        jenkins_slave_ssh_hostname: "{{ hostvars[item].jenkins_slave_ssh_hostname.stdout }}"
-        jenkins_slave_ssh_fingerprint: "{{ hostvars[item].jenkins_slave_ssh_fingerprint.stdout }}"
-      with_inventory_hostnames: jenkins_slave
-      tags:
-        # Skip ANSIBLE0015. Use of bare variable jenkins_master is correct.
-        - skip_ansible_lint
-
-    - name: Add Jenkins slave SSH fingerprint to known hosts
-      become_user: jenkins
-      known_hosts:
-        name: "{{ jenkins_slave_ssh_hostname }}"
-        key: "{{ jenkins_slave_ssh_fingerprint }}"
-        state: present
-
     # TODO: This is kind of hacky since it doesn't deal with multiple jenkins
     #       slaves. We'll need to circle back and make this deal with lists.
     - name: Check if our node already exists
@@ -367,3 +202,8 @@
         name: /tmp/jenkins_slave_{{ slave_name }}.tmpl
         state: absent
       when: slave_name is defined and jenkins_cli_get_node.stderr != ""
+
+######################
+# Deploy Jenkins jobs
+######################
+- include: jenkins_jobs.yml
