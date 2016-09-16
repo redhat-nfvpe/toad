@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <slave>
-  <name>{{ slave_name }}</name>
-  <description>{{ slave_description }}</description>
-  <remoteFS>{{ slave_remoteFS }}</remoteFS>
+  <name>{{ item.item }}</name>
+  <description>{{ hostvars[item.item].slave_description }}</description>
+  <remoteFS>{{ hostvars[item.item].slave_remoteFS }}</remoteFS>
   <numExecutors>1</numExecutors>
   <mode>NORMAL</mode>
   <retentionStrategy class="hudson.slaves.RetentionStrategy$Always"/>
   <launcher class="hudson.plugins.sshslaves.SSHLauncher" plugin="ssh-slaves@1.11">
-    <host>{{ slave_host }}</host>
-    <port>{{ slave_port }}</port>
-    <credentialsId>{{ slave_credentialsId }}</credentialsId>
+    <host>{{ hostvars[item.item].ansible_host }}</host>
+    <port>{{ hostvars[item.item].slave_port }}</port>
+    <credentialsId>{{ hostvars[item.item].slave_credentialsId }}</credentialsId>
     <maxNumRetries>0</maxNumRetries>
     <retryWaitTime>0</retryWaitTime>
   </launcher>
-  <label>{{ slave_label }}</label>
+  <label>{{ hostvars[item.item].slave_label }}</label>
   <nodeProperties/>
 </slave>

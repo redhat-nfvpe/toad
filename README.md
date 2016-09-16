@@ -90,14 +90,6 @@ be found in the _Access & Security_ section of the Horizon dashboard.
       - hostname: 127.0.0.1
         path: "{{ jenkins_master_results_directory }}"   # defined in vars/main.yml
 
-    slave_name: nfv-slave-01
-    slave_description: CIRA Testing Node
-    slave_remoteFS: /home/jenkins
-    slave_host: 10.10.0.101
-    slave_port: 22
-    slave_credentialsId: jenkins-credential
-    slave_label: cira
-
 ## Deployment
 
 ### Base Deployment
@@ -185,6 +177,13 @@ with the following template:
 
     [jenkins_slave]
     slave01 ansible_host=10.10.1.1 ansible_user=ansible
+ 
+    [jenkins_slave:vars]
+    slave_description=CIRA Testing Node
+    slave_remoteFS=/home/jenkins
+    slave_port=22
+    slave_credentialsId=jenkins-credential
+    slave_label=cira
 
 Add additional fields if necessary. It is assumed that the `ansible` user has
 been previously created, and that you can login either via SSH keys, or provide
