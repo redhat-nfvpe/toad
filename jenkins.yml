@@ -171,37 +171,42 @@
     - ~/.ansible/vars/cira_vars.yml
 
   tasks:
-    # TODO: This is kind of hacky since it doesn't deal with multiple jenkins
-    #       slaves. We'll need to circle back and make this deal with lists.
     - name: Check if our node already exists
-      ignore_errors: true
       command: >
         java -jar {{ jenkins_jar_location }} -s http://{{ jenkins_hostname }}:{{ jenkins_http_port }}{{ jenkins_url_prefix | default('') }}/
-        get-node {{ slave_name }}
+        get-node {{ item }}
         --username {{ jenkins_admin_username }}
         --password {{ jenkins_admin_password }}
-      register: jenkins_cli_get_node
-      when: slave_name is defined
+      ignore_errors: true
+      register: jenkins_cli_get_nodes
+      with_items:
+         - "{{ groups['jenkins_slave'] }}"
 
     - name: Deploy template for Jenkins slave node
       template:
         src: jenkins_slave.j2
-        dest: /tmp/jenkins_slave_{{ slave_name }}.tmpl
-      when: jenkins_cli_get_node.stderr is defined and jenkins_cli_get_node.stderr != ""
+        dest: /tmp/jenkins_slave_{{ item.item }}.tmpl
+      when: "{{ item.rc != 0 }}"
+      with_items: 
+         - "{{ jenkins_cli_get_nodes.results }}"
 
     - name: Add Jenkins slave node to the master
       shell: >
         java -jar {{ jenkins_jar_location }} -s http://{{ jenkins_hostname }}:{{ jenkins_http_port }}{{ jenkins_url_prefix | default('') }}/
-        create-node {{ slave_name }}
+        create-node {{ item.item }}
         --username {{ jenkins_admin_username }}
-        --password {{ jenkins_admin_password }} < /tmp/jenkins_slave_{{ slave_name }}.tmpl
-      when: jenkins_cli_get_node.stderr is defined and jenkins_cli_get_node.stderr != ""
+        --password {{ jenkins_admin_password }} < /tmp/jenkins_slave_{{ item.item }}.tmpl
+      when: "{{ item.rc != 0 }}"
+      with_items:
+         - "{{ jenkins_cli_get_nodes.results }}"
 
     - name: Remove template for Jenkins slave node
       file:
-        name: /tmp/jenkins_slave_{{ slave_name }}.tmpl
+        name: /tmp/jenkins_slave_{{ item }}.tmpl
         state: absent
-      when: slave_name is defined and jenkins_cli_get_node.stderr != ""
+      when: "{{ item.rc != 0 }}"
+      with_items:
+         - "{{ jenkins_cli_get_nodes.results }}"
 
 ######################
 # Deploy Jenkins jobs
