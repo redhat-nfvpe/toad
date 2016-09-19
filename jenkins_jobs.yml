@@ -39,6 +39,8 @@
         accept_hostkey: yes
       delegate_to: localhost
       changed_when: false
+      tags:
+        - clone_jobs
 
     - name: Create folder to store config
       file:
