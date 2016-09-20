@@ -77,11 +77,14 @@
         delete: yes
         dest: "{{ jenkins_job_builder_file_jobs_dest }}"
         perms: yes
-        src: "{{ jenkins_job_builder_file_jobs_src }}"
+        src: "{{ item }}"
       when: jenkins_job_builder_file_jobs_src != ""
+      with_items: "{{ jenkins_job_builder_file_jobs_src }}"
       notify:
         - Check jenkins
         - Reload jenkins-jobs
+      tags:
+        - sync_jobs
 
     - name: Results of JJB reload
       debug:
