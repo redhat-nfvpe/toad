@@ -71,8 +71,19 @@
     - { role: 'leifmadsen.jenkins-job-builder' }
 
   post_tasks:
+    - name: Synchronize JJB config to remote server
+      become: no
+      synchronize:
+        delete: yes
+        dest: "{{ jenkins_job_builder_file_jobs_dest }}"
+        perms: yes
+        src: "{{ jenkins_job_builder_file_jobs_src }}"
+      when: jenkins_job_builder_file_jobs_src != ""
+      notify:
+        - Check jenkins
+        - Reload jenkins-jobs
+
     - name: Results of JJB reload
       debug:
         var: reload_jenkins_jobs_result.stderr
       when: reload_jenkins_jobs_result is defined
-
