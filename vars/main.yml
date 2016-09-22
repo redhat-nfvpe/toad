@@ -17,6 +17,7 @@ jenkins_plugins:
   - ssh-slaves
   - ws-cleanup
   - xtrigger
+  - envinject
 jenkins_scp_sites: []
 
 # JJB Configuration
