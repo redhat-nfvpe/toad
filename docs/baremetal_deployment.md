@@ -119,20 +119,20 @@ export VIRTHOST=127.0.0.2<br />
 export HW_ENV_DIR=${WORKSPACE}/config/hw_environments/tef<br /><br />
 sudo bash ./quickstart.sh --install-deps<br />
 bash quickstart.sh \<br />
---working-dir /home/jenkins/quickstart \<br />
---bootstrap \<br />
---tags all \<br />
---skip-tags overcloud-validate \<br />
---no-clone \<br />
---teardown all \<br />
---requirements ${WORKSPACE}/config/requirements/quickstart-role-baremetal-requirements.txt \<br />
---requirements $HW_ENV_DIR/network_configs/single_nic_vlans/requirements_files/baremetal-virt-undercloud.txt \<br />
---config $HW_ENV_DIR/network_configs/single_nic_vlans/config_files/config.yml \<br />
---extra-vars @$HW_ENV_DIR/network_configs/single_nic_vlans/env_settings.yml \<br />
---playbook baremetal-virt-undercloud-tripleo.yml \<br />
---extra-vars undercloud_instackenv_template=$HW_ENV_DIR/instackenv.json \<br />
---extra-vars network_environment_file=$HW_ENV_DIR/network_configs/single_nic_vlans/single_nic_vlans.yml \<br />
---extra-vars nic_configs_dir=$HW_ENV_DIR/network_configs/single_nic_vlans/nic_configs/ \<br />
---extra-vars jenkins_workspace=${WORKSPACE} \<br />
---release mitaka \<br />
-$VIRTHOST
+  --working-dir /home/jenkins/quickstart \<br />
+  --bootstrap \<br />
+  --tags all \<br />
+  --skip-tags overcloud-validate \<br />
+  --no-clone \<br />
+  --teardown all \<br />
+  --requirements ${WORKSPACE}/config/requirements/quickstart-role-baremetal-requirements.txt \<br />
+  --requirements $HW_ENV_DIR/network_configs/single_nic_vlans/requirements_files/baremetal-virt-undercloud.txt \<br />
+  --config $HW_ENV_DIR/network_configs/single_nic_vlans/config_files/config.yml \<br />
+  --extra-vars @$HW_ENV_DIR/network_configs/single_nic_vlans/env_settings.yml \<br />
+  --playbook baremetal-virt-undercloud-tripleo.yml \<br />
+  --extra-vars undercloud_instackenv_template=$HW_ENV_DIR/instackenv.json \<br />
+  --extra-vars network_environment_file=$HW_ENV_DIR/network_configs/single_nic_vlans/single_nic_vlans.yml \<br />
+  --extra-vars nic_configs_dir=$HW_ENV_DIR/network_configs/single_nic_vlans/nic_configs/ \<br />
+  --extra-vars jenkins_workspace=${WORKSPACE} \<br />
+  --release mitaka \<br />
+  $VIRTHOST
