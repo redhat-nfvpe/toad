@@ -46,21 +46,21 @@ Each hardware environment needs the following content:
 
   {<br />
     "nodes": [<br />
-      {
-        "mac": [
-          "mac-address"
-        ],
-        "cpu": "number-of-available-cpus",
-        "memory": "amount-of-memory-in-mb",
-        "disk": "amount-of-memory-in-gb",
-        "arch": "x864_64",
-        "pm_type": "pxe_ipmitool",
-        "pm_user": "ipmi_user",
-        "pm_password": "ipmi_pass",
-        "pm_addr": "ipmi_address"
-      }
-    ]
-  }
+      {<br />
+        "mac": [<br />
+          "mac-address"<br />
+        ],<br />
+        "cpu": "number-of-available-cpus",<br />
+        "memory": "amount-of-memory-in-mb",<br />
+        "disk": "amount-of-memory-in-gb",<br />
+        "arch": "x864_64",<br />
+        "pm_type": "pxe_ipmitool",<br />
+        "pm_user": "ipmi_user",<br />
+        "pm_password": "ipmi_pass",<br />
+        "pm_addr": "ipmi_address"<br />
+      }<br />
+    ]<br />
+  }<br />
 
  - **network_configs:** different kind of network configurations can be on that folder. In our case, we are starting with single_nic_vlans
  - **network_configs/single_nic_vlans:** subfolder containing all settings needed for that kind of network deployment on that hardware environment.
@@ -71,30 +71,29 @@ Each hardware environment needs the following content:
 
    It follows this schema:
 
-   environment_type: name_of_your_hw_environment
-   hw_env: same
-   network_environment_file: "{{ lookup('env', 'WORKSPACE') }}/config/hw_environments/tef/network_configs/single_nic_vlans/single_nic_vlans.yml"
-   undercloud_network_cidr: 192.0.2.0/24
-   undercloud_external_network_cidr: 10.0.0.1/24
-   undercloud_network_gateway: 192.0.2.254
-   undercloud_local_interface: eth1
-   undercloud_masquerade_network: 192.0.2.0/24
-   virthost_provisioning_interface: eth1
-   virthost_provisioning_ip: 192.168.122.1
-   virthost_provisioning_netmask: 255.255.255.0
-   virthost_provisioning_hwaddr: ec:f4:bb:c0:b5:30
-   virthost_ext_provision_interface: em3
- 
-   overcloud_nodes:
-   step_introspect: true
-   introspect: true
-   step_root_device_size: false
-   network_isolation_type: single_nic_vlans
-   network_isolation: true
-   floating_ip_cidr: 10.8.125.0/24
-   floating_ip_start: 10.8.125.161
-   floating_ip_end: 10.8.125.170
-   external_network_gateway: 10.8.125.254
+   environment_type: name_of_your_hw_environment<br />
+   hw_env: same<br />
+   network_environment_file: "{{ lookup('env', 'WORKSPACE') }}/config/hw_environments/tef/network_configs/single_nic_vlans/single_nic_vlans.yml"<br />
+   undercloud_network_cidr: 192.0.2.0/24<br />
+   undercloud_external_network_cidr: 10.0.0.1/24<br />
+   undercloud_network_gateway: 192.0.2.254<br />
+   undercloud_local_interface: eth1<br />
+   undercloud_masquerade_network: 192.0.2.0/24<br />
+   virthost_provisioning_interface: eth1<br />
+   virthost_provisioning_ip: 192.168.122.1<br />
+   virthost_provisioning_netmask: 255.255.255.0<br />
+   virthost_provisioning_hwaddr: ec:f4:bb:c0:b5:30<br />
+   virthost_ext_provision_interface: em3<br />
+   overcloud_nodes:<br />
+   step_introspect: true<br />
+   introspect: true<br />
+   step_root_device_size: false<br />
+   network_isolation_type: single_nic_vlans<br />
+   network_isolation: true<br />
+   floating_ip_cidr: 10.8.125.0/24<br />
+   floating_ip_start: 10.8.125.161<br />
+   floating_ip_end: 10.8.125.170<br />
+   external_network_gateway: 10.8.125.254<br />
 
  - **network_configs/single_nic_vlans/single_nic_vlans.yml:** This is the file referenced by network_environment file. It contains the TripleO configuration for
   the overcloud deployment, specifically for our hardware and network environment. Please refer to 
@@ -104,38 +103,38 @@ Each hardware environment needs the following content:
  - **network_configs/single_nic_vlans/requirements_files/baremetal-virt-undercloud.txt:** This will allow to bring all the specific ansible roles needed for baremetal deployment.
    There can be custom roles for preparing the virtualized environment, deploying overcloud, etc... A sample requirements file looks like:
 
-   git+https://github.com/redhat-openstack/ansible-role-tripleo-validate-ipmi.git/#egg=ansible-role-tripleo-validate-ipmi
-   git+https://github.com/redhat-openstack/ansible-role-tripleo-baremetal-overcloud.git/#egg=ansible-role-tripleo-baremetal-overcloud
-   git+https://github.com/redhat-openstack/ansible-role-tripleo-baremetal-prep-virthost/#egg=ansible-role-tripleo-baremetal-prep-virthost
-   git+https://github.com/redhat-openstack/ansible-role-tripleo-overcloud/#egg=ansible-role-tripleo-overcloud
+   git+https://github.com/redhat-openstack/ansible-role-tripleo-validate-ipmi.git/#egg=ansible-role-tripleo-validate-ipmi<br />
+   git+https://github.com/redhat-openstack/ansible-role-tripleo-baremetal-overcloud.git/#egg=ansible-role-tripleo-baremetal-overcloud<br />
+   git+https://github.com/redhat-openstack/ansible-role-tripleo-baremetal-prep-virthost/#egg=ansible-role-tripleo-baremetal-prep-virthost<br />
+   git+https://github.com/redhat-openstack/ansible-role-tripleo-overcloud/#egg=ansible-role-tripleo-overcloud<br />
 
-** How to run the baremetal job **
+**How to run the baremetal job**
 
 A final TripleO Quickstart deployment with baremetal follows the same process as a virtualized one, but adding extra configs and
 requirements. A sample call will look like:
 
-git clone https://git.openstack.org/openstack/tripleo-quickstart.git
-cd tripleo-quickstart
+git clone https://git.openstack.org/openstack/tripleo-quickstart.git<br />
+cd tripleo-quickstart<br /><br />
 
-export VIRTHOST=127.0.0.2
-export HW_ENV_DIR=${WORKSPACE}/config/hw_environments/tef
+export VIRTHOST=127.0.0.2<br />
+export HW_ENV_DIR=${WORKSPACE}/config/hw_environments/tef<br /><br />
 
-sudo bash ./quickstart.sh --install-deps
-bash quickstart.sh \
---working-dir /home/jenkins/quickstart \
---bootstrap \
---tags all \
---skip-tags overcloud-validate \
---no-clone \
---teardown all \
---requirements ${WORKSPACE}/config/requirements/quickstart-role-baremetal-requirements.txt \
---requirements $HW_ENV_DIR/network_configs/single_nic_vlans/requirements_files/baremetal-virt-undercloud.txt \
---config $HW_ENV_DIR/network_configs/single_nic_vlans/config_files/config.yml \
---extra-vars @$HW_ENV_DIR/network_configs/single_nic_vlans/env_settings.yml \
---playbook baremetal-virt-undercloud-tripleo.yml \
---extra-vars undercloud_instackenv_template=$HW_ENV_DIR/instackenv.json \
---extra-vars network_environment_file=$HW_ENV_DIR/network_configs/single_nic_vlans/single_nic_vlans.yml \
---extra-vars nic_configs_dir=$HW_ENV_DIR/network_configs/single_nic_vlans/nic_configs/ \
---extra-vars jenkins_workspace=${WORKSPACE} \
---release mitaka \
+sudo bash ./quickstart.sh --install-deps<br />
+bash quickstart.sh \<br />
+--working-dir /home/jenkins/quickstart \<br />
+--bootstrap \<br />
+--tags all \<br />
+--skip-tags overcloud-validate \<br />
+--no-clone \<br />
+--teardown all \<br />
+--requirements ${WORKSPACE}/config/requirements/quickstart-role-baremetal-requirements.txt \<br />
+--requirements $HW_ENV_DIR/network_configs/single_nic_vlans/requirements_files/baremetal-virt-undercloud.txt \<br />
+--config $HW_ENV_DIR/network_configs/single_nic_vlans/config_files/config.yml \<br />
+--extra-vars @$HW_ENV_DIR/network_configs/single_nic_vlans/env_settings.yml \<br />
+--playbook baremetal-virt-undercloud-tripleo.yml \<br />
+--extra-vars undercloud_instackenv_template=$HW_ENV_DIR/instackenv.json \<br />
+--extra-vars network_environment_file=$HW_ENV_DIR/network_configs/single_nic_vlans/single_nic_vlans.yml \<br />
+--extra-vars nic_configs_dir=$HW_ENV_DIR/network_configs/single_nic_vlans/nic_configs/ \<br />
+--extra-vars jenkins_workspace=${WORKSPACE} \<br />
+--release mitaka \<br />
 $VIRTHOST
