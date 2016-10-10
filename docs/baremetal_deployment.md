@@ -20,7 +20,7 @@ To perform baremetal deployments, there are the following requirements:
  - If using network isolation, 5 vlans: InternalApi, Storage, StorageManagement, External, Tenant
 
 In terms of ansible roles, it needs a different set of requirements than TripleO quickstart. To consume them, please define
-a quickstart-role-baremetla-requirements.txt file that will contain following dependencies::
+a quickstart-role-baremetla-requirements.txt file that will contain following dependencies:
 
 - git+https://github.com/redhat-openstack/ansible-role-tripleo-cleanup-nfo.git/#egg=ansible-role-tripleo-cleanup-nfo
 - git+https://github.com/redhat-openstack/ansible-role-tripleo-collect-logs.git/#egg=ansible-role-tripleo-collect-logs
@@ -44,8 +44,8 @@ Each hardware environment needs the following content:
 
  - **instackenv.json:** ironic inventory with all the servers to be enrolled is defined here. It needs to follow that schema:
 
-  {
-    "nodes": [
+  {<br />
+    "nodes": [<br />
       {
         "mac": [
           "mac-address"
