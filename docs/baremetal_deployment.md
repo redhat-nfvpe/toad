@@ -114,11 +114,9 @@ A final TripleO Quickstart deployment with baremetal follows the same process as
 requirements. A sample call will look like:
 
 git clone https://git.openstack.org/openstack/tripleo-quickstart.git<br />
-cd tripleo-quickstart<br /><br />
-
+cd tripleo-quickstart<br />
 export VIRTHOST=127.0.0.2<br />
 export HW_ENV_DIR=${WORKSPACE}/config/hw_environments/tef<br /><br />
-
 sudo bash ./quickstart.sh --install-deps<br />
 bash quickstart.sh \<br />
 --working-dir /home/jenkins/quickstart \<br />
