@@ -126,7 +126,7 @@
     sudo_defaults:
       - defaults: '!requiretty'
     sudo_users:
-      - name: 'jenkins'
+      - name: 'stack'
         nopasswd: yes
 
   pre_tasks:
@@ -135,10 +135,10 @@
         name: libselinux-python
         state: present
 
-    - name: Create jenkins user
+    - name: Create stack user
       user:
-        name: jenkins
-        comment: "Jenkins Slave User"
+        name: stack
+        comment: "Stack Slave User"
         generate_ssh_key: yes
 
   tasks:
