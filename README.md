@@ -180,9 +180,9 @@ with the following template:
  
     [jenkins_slave:vars]
     slave_description=CIRA Testing Node
-    slave_remoteFS=/home/jenkins
+    slave_remoteFS=/home/stack
     slave_port=22
-    slave_credentialsId=jenkins-credential
+    slave_credentialsId=stack-credential
     slave_label=cira
 
 Add additional fields if necessary. It is assumed that the `ansible` user has
