@@ -84,28 +84,28 @@
         # Skip ANSIBLE0015. Use of bare variable jenkins_master is correct.
         - skip_ansible_lint
 
-    - name: Get contents of jenkins public key
-      command: cat /home/jenkins/.ssh/id_rsa.pub
-      register: jenkins_slave_pub
+    - name: Get contents of stack public key
+      command: cat /home/stack/.ssh/id_rsa.pub
+      register: stack_slave_pub
       tags:
         # Skip ANSIBLE0012. We want to validate our public key is copied over.
         - skip_ansible_lint
 
     - name: Add authorized host keys to authorized_keys
-      become_user: jenkins
+      become_user: stack
       ignore_errors: yes
       authorized_key:
-        user: jenkins
+        user: stack
         key: "{{ item }}"
       with_items:
       - "{{ jenkins_master_pub }}"
-      - "{{ jenkins_slave_pub.stdout }}"
+      - "{{ stack_slave_pub.stdout }}"
 
-    - name: Add jenkins public key to local root user
+    - name: Add stack public key to local root user
       become: yes
       authorized_key:
         user: root
-        key: "{{ jenkins_slave_pub.stdout }}"
+        key: "{{ stack_slave_pub.stdout }}"
 
     - name: Get SSH fingerprint of slave
       shell: ssh-keyscan -4 -t ecdsa-sha2-nistp256 $HOSTNAME
