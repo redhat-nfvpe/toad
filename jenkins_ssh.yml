@@ -140,3 +140,4 @@
         name: "{{ jenkins_slave_ssh_hostname }}"
         key: "{{ jenkins_slave_ssh_fingerprint }}"
         state: present
+      when: jenkins_slave_ssh_hostname is defined
