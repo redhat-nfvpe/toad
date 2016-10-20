@@ -1,0 +1,51 @@
+version: '2'
+
+# docker-compose file to launch jenkins_master/ELK stack instead of VM.
+services:
+  jenkins_master:
+    build: 
+      context: ./dockerfiles 
+      dockerfile: centos7_base
+    container_name: jenkins_master
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - /run
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    entrypoint: /sbin/init
+
+  logstash:
+    build: 
+      context: ./dockerfiles 
+      dockerfile: centos7_base
+    container_name: logstash
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - /run
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    entrypoint: /sbin/init
+
+  elasticsearch:
+    build: 
+      context: ./dockerfiles 
+      dockerfile: centos7_base
+    container_name: elasticsearch
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - /run
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    entrypoint: /sbin/init
+
+  kibana:
+    build: 
+      context: ./dockerfiles 
+      dockerfile: centos7_base
+    container_name: kibana
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - /run
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    entrypoint: /sbin/init

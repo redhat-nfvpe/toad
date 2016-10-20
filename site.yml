@@ -24,7 +24,7 @@
   post_tasks:
     - name: Where is Kibana located?
       debug:
-        msg: "Kibana can be reached at http://{{hostvars['kibana']['ansible_host']}}:5601/"
+        msg: "Kibana can be reached at http://{{hostvars[inventory_hostname]['ansible_default_ipv4']['address']}}:5601/"
 
 - hosts: jenkins_master
   tags:
@@ -33,4 +33,4 @@
   post_tasks:
     - name: Where is Jenkins Master located?
       debug:
-        msg: "Jenkins Master can be reached at http://{{hostvars['jenkins_master']['ansible_host']}}:8080/"
+        msg: "Jenkins Master can be reached at http://{{hostvars[inventory_hostname]['ansible_default_ipv4']['address']}}:8080/"

@@ -32,6 +32,13 @@ that directory (adjust to your own cloud connection):
                 password: cloud_pass
                 project_name: "My Cloud Project"
 
+## Docker
+
+ansible-cira also supports docker container instead of OpenStack and Vagrant.
+In order to use docker, you need to insatll [docker-compose](https://docs.docker.com/compose/).
+
+At present, we tested in docker-compose 1.7.1, build 6c289830.
+
 ## Overrides / Private Info
 
 There may be some variables you don't want to expose into a Git repo. You can
@@ -142,6 +149,46 @@ Format is the following (see _Example Variable Override File_ for an example):
         user: jenkins1
         keyfile: abc
         path: /test/path
+
+## Base Deployment (docker)
+
+Start by creating `hosts/containers` (or similar) and add your baremetal machine
+with the following template:
+
+    jenkins_master
+    logstash
+    elasticsearch
+    kibana
+
+These name (e.g. jenkins_master, logstash...) should be matched with container name in cira-container.yml.
+
+If you need to add jenkins slaves (baremetal), add slave information in 'hosts/containers'
+as following (please add 'ansible_connection=ssh').
+
+    [jenkins_slave]
+    slave01 ansible_connection=ssh ansible_host=10.10.1.1 ansible_user=ansible
+
+    [jenkins_slave:vars]
+    slave_description=CIRA Testing Node
+    slave_remoteFS=/home/stack
+    slave_port=22
+    slave_credentialsId=jenkins-credential
+    slave_label=cira
+
+Then, you can run following commands to setup containers and to setup cira environments.
+
+    $ docker-compose up -d
+    $ ansible-playbook site.yml -vvvv -i hosts/containers -e use_openstack_deploy=false -e deploy_type='docker' -c docker
+
+After you finish, you can stop these containers and restart them.
+
+    $ docker-compose stop
+    (To restart them)
+    $ docker-compose restart
+
+The following commands deletes container.
+
+    $ docker-compose down
 
 ### Jenkins Slave Installation
 

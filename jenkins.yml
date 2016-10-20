@@ -20,6 +20,22 @@
     sudo_defaults:
       - defaults: '!requiretty'
 
+  pre_tasks:
+    - name: Add jenkins service unit to systemd in case of docker.
+      copy:
+        dest: /etc/systemd/system/jenkins.service
+        content: |
+            [Unit]
+            Description=Jenkins Daemon
+
+            [Service]
+            ExecStart=/usr/bin/java -Dcom.sun.akuma.Daemon=daemonized -Djava.awt.headless=true -Djenkins.install.runSetupWizard=false -DJENKINS_HOME=/var/lib/jenkins -jar /usr/lib/jenkins/jenkins.war --logfile=/var/log/jenkins/jenkins.log --webroot=/var/cache/jenkins/war --daemon --httpPort=8080 --debug=5 --handlerCountMax=100 --handlerCountMaxIdle=20 --prefix=
+            User=jenkins
+
+            [Install]
+            WantedBy=multi-user.target
+      when: deploy_type is defined and deploy_type == 'docker'
+
   tasks:
     - name: Set facts for later use
       set_fact:
@@ -29,6 +45,13 @@
         jenkins_url_prefix: "{{ jenkins_url_prefix }}"
         jenkins_admin_username: "{{ jenkins_admin_username }}"
         jenkins_admin_password: "{{ jenkins_admin_password }}"
+
+# In case of docker, jenkins is managed under systemd unit (see above)
+    - name: jenkins init script is removed in case of docker
+      file:
+        path: /etc/init.d/jenkins
+        state: absent
+      when: deploy_type is defined and deploy_type == 'docker'
 
   post_tasks:
     # Operating system configuration and setup
@@ -56,12 +79,14 @@
       selinux:
         policy: targeted
         state: enforcing
+      when: ansible_connection != 'docker'
 
     - name: SELinux -- Enable httpd_can_network_connect
       seboolean:
         name: httpd_can_network_connect
         state: yes
         persistent: yes
+      when: ansible_connection != 'docker'
 
     # Copy in configuration for Nginx web proxy fronting Jenkins web UI
     - name: Copy Jenkins Nginx Configuration

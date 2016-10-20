@@ -66,6 +66,13 @@
         src: "./files/nfv_jobs_config/"
         dest: "{{ jenkins_job_config_file_src }}"
         archive: yes
+      when: deploy_type is not defined or deploy_type != 'docker'
+
+    - name: Synchronize job config to remote server (docker)
+      copy:
+        src: "{{ jenkins_job_config_file_src }}"
+        dest: "{{ jenkins_job_config_file_dest }}"
+      when: deploy_type is defined and deploy_type == 'docker'
 
   roles:
     - { role: 'leifmadsen.jenkins-job-builder' }
@@ -78,13 +85,34 @@
         dest: "{{ jenkins_job_builder_file_jobs_dest }}"
         perms: yes
         src: "{{ item }}"
-      when: jenkins_job_builder_file_jobs_src != ""
+      when: jenkins_job_builder_file_jobs_src != "" and
+            (deploy_type is not defined or deploy_type != 'docker')
       with_items: "{{ jenkins_job_builder_file_jobs_src }}"
       notify:
         - Check jenkins
         - Reload jenkins-jobs
       tags:
         - sync_jobs
+
+    - name: prepare Synchronize JJB config to remote server (docker)
+      file:
+        path: "{{ jenkins_job_builder_file_jobs_dest }}"
+        group: jenkins
+        owner: jenkins
+      when: jenkins_job_builder_file_jobs_src != "" and
+            (deploy_type is defined and deploy_type == 'docker')
+
+    - name: Synchronize JJB config to remote server (docker)
+      become: true
+      become_user: jenkins
+      copy:
+        dest: "{{ jenkins_job_builder_file_jobs_dest }}"
+        src: "{{ item }}"
+      when: jenkins_job_builder_file_jobs_src != "" and
+            (deploy_type is defined and deploy_type == 'docker')
+      with_items: "{{ jenkins_job_builder_file_jobs_src }}"
+      notify:
+        - Check jenkins
 
     - name: Results of JJB reload
       debug:
