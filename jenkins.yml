@@ -188,7 +188,7 @@
       template:
         src: jenkins_slave.j2
         dest: /tmp/jenkins_slave_{{ item.item }}.tmpl
-      when: jenkins_cli_get_nodes is defined and "{{ item.rc }}" != 0
+      when: jenkins_cli_get_nodes is defined and "{{ item.rc }}" != '0'
       with_items:
          - "{{ jenkins_cli_get_nodes.results }}"
 
@@ -198,7 +198,7 @@
         create-node {{ item.item }}
         --username {{ jenkins_admin_username }}
         --password {{ jenkins_admin_password }} < /tmp/jenkins_slave_{{ item.item }}.tmpl
-      when: jenkins_cli_get_nodes is defined and "{{ item.rc }}" != 0
+      when: jenkins_cli_get_nodes is defined and "{{ item.rc }}" != '0'
       with_items:
          - "{{ jenkins_cli_get_nodes.results }}"
 
@@ -206,7 +206,7 @@
       file:
         name: /tmp/jenkins_slave_{{ item }}.tmpl
         state: absent
-      when: jenkins_cli_get_nodes is defined and "{{ item.rc }}" != 0
+      when: jenkins_cli_get_nodes is defined and "{{ item.rc }}" != '0'
       with_items:
          - "{{ jenkins_cli_get_nodes.results }}"
 
