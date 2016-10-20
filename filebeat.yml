@@ -3,12 +3,13 @@
 
 # Deploy Jenkins Master
 - hosts: jenkins_master
+  become: true
   tags:
     - jenkins_master
     - logging
 
   vars_files:
-    - "{{ inventory_dir  }}/../vars/main.yml"
+    - "{{ inventory_dir  }}/{{ vars_files_relative  }}/vars/main.yml"
     - ~/.ansible/vars/cira_vars.yml
 
   roles:

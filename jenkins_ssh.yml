@@ -1,12 +1,14 @@
 # vim: ft=ansible
 ---
 - hosts: jenkins_master
+  become: true
+  become_user: jenkins
   tags:
     - jenkins_master
     - jenkins_ssh
 
   vars_files:
-    - "{{ inventory_dir  }}/../vars/main.yml"
+    - "{{ inventory_dir  }}/{{ vars_files_relative }}/vars/main.yml"
     - ~/.ansible/vars/cira_vars.yml
 
   tasks:
@@ -67,7 +69,7 @@
     - jenkins_ssh
 
   vars_files:
-    - "{{ inventory_dir  }}/../vars/main.yml"
+    - "{{ inventory_dir  }}/{{ vars_files_relative }}/vars/main.yml"
     - ~/.ansible/vars/cira_vars.yml
 
   tasks:
@@ -140,4 +142,4 @@
         name: "{{ jenkins_slave_ssh_hostname }}"
         key: "{{ jenkins_slave_ssh_fingerprint }}"
         state: present
-      when: jenkins_slave_ssh_hostname is defined
+      when: jenkins_slave_ssh_hostname is defined and jenkins_slave_ssh_fingerprint is defined and jenkins_slave_ssh_fingerprint != ""
