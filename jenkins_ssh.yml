@@ -52,6 +52,7 @@
         - skip_ansible_lint
 
     - name: Add localhost SSH fingerprint to known_hosts
+      become: yes
       become_user: jenkins
       known_hosts:
         name: 127.0.0.1
@@ -102,7 +103,6 @@
       - "{{ stack_slave_pub.stdout }}"
 
     - name: Add stack public key to local root user
-      become: yes
       authorized_key:
         user: root
         key: "{{ stack_slave_pub.stdout }}"
