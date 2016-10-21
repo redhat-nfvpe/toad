@@ -9,8 +9,9 @@ Quickstart](https://github.com/openstack/tripleo-quickstart).
 # Requirements
 
 There are two ways to install CIRA. You deploy locally into a development
-environment using Vagrant, or you can deploy to an OpenStack instance. Below
-you will find the list of requirements for each of the deployment scenarios.
+environment using Vagrant, you can deploy locally into a docker container
+or you can deploy to an OpenStack instance. Below you will find the list of 
+requirements for each of the deployment scenarios.
 
 For Ansible, several roles are required, and you can install them as follows:
 
@@ -27,6 +28,14 @@ provider, you'll need to install a new provider plugin.
 
 Additional information about other dependencies required by vagrant-libvirt are
 available at https://github.com/vagrant-libvirt/vagrant-libvirt
+
+## Docker
+
+ansible-cira also supports docker container instead of OpenStack and Vagrant.
+In order to use docker, you need to insatll 
+[docker-compose](https://docs.docker.com/compose/).
+
+At present, we tested in docker-compose 1.7.1, build 6c289830.
 
 ## OpenStack
 
@@ -49,13 +58,6 @@ that directory (adjust to your own cloud connection):
                 username: cloud_user
                 password: cloud_pass
                 project_name: "My Cloud Project"
-
-## Docker
-
-ansible-cira also supports docker container instead of OpenStack and Vagrant.
-In order to use docker, you need to insatll [docker-compose](https://docs.docker.com/compose/).
-
-At present, we tested in docker-compose 1.7.1, build 6c289830.
 
 # Overrides / Private Info
 
@@ -141,6 +143,49 @@ configuration to the virtual machines. The deployment uses the built in default
 networking configuration that Vagrant instantiates. At the end of the run, the
 web interface addresses for Jenkins and Kibana will be displayed.
 
+## Base Deployment (docker)
+
+Start by creating `hosts/containers` (or similar) and add your baremetal machine
+with the following template:
+
+    jenkins_master
+    logstash
+    elasticsearch
+    kibana
+
+These name (e.g. jenkins_master, logstash...) should be matched with container name in cira-container.yml.
+
+### Adding baremetal slaves into docker deployment
+If you need to add jenkins slaves (baremetal), add slave information in 'hosts/containers'
+as following (please add 'ansible_connection=ssh').
+
+    [jenkins_slave]
+    slave01 ansible_connection=ssh ansible_host=10.10.1.1 ansible_user=ansible
+
+    [jenkins_slave:vars]
+    slave_description=CIRA Testing Node
+    slave_remoteFS=/home/stack
+    slave_port=22
+    slave_credentialsId=stack-credential
+    slave_label=cira
+
+### Running container and start provisioning
+Then, you can run following commands to setup containers and to setup cira environments.
+
+    $ docker-compose up -d
+    $ ansible-playbook site.yml -vvvv -i hosts/containers \
+         -e use_openstack_deploy=false -e deploy_type='docker' -c docker
+
+After you finish, you can stop these containers and restart them.
+
+    $ docker-compose stop
+    (To restart them)
+    $ docker-compose restart
+
+The following commands deletes container.
+
+    $ docker-compose down
+
 ## Base Deployment (OpenStack)
 
 You may need to modify the `host_vars/localhost` file to adjust the
@@ -195,46 +240,6 @@ Format is the following (see _Example Variable Override File_ for an example):
         user: jenkins1
         keyfile: abc
         path: /test/path
-
-## Base Deployment (docker)
-
-Start by creating `hosts/containers` (or similar) and add your baremetal machine
-with the following template:
-
-    jenkins_master
-    logstash
-    elasticsearch
-    kibana
-
-These name (e.g. jenkins_master, logstash...) should be matched with container name in cira-container.yml.
-
-If you need to add jenkins slaves (baremetal), add slave information in 'hosts/containers'
-as following (please add 'ansible_connection=ssh').
-
-    [jenkins_slave]
-    slave01 ansible_connection=ssh ansible_host=10.10.1.1 ansible_user=ansible
-
-    [jenkins_slave:vars]
-    slave_description=CIRA Testing Node
-    slave_remoteFS=/home/stack
-    slave_port=22
-    slave_credentialsId=jenkins-credential
-    slave_label=cira
-
-Then, you can run following commands to setup containers and to setup cira environments.
-
-    $ docker-compose up -d
-    $ ansible-playbook site.yml -vvvv -i hosts/containers -e use_openstack_deploy=false -e deploy_type='docker' -c docker
-
-After you finish, you can stop these containers and restart them.
-
-    $ docker-compose stop
-    (To restart them)
-    $ docker-compose restart
-
-The following commands deletes container.
-
-    $ docker-compose down
 
 ### Jenkins Slave Installation
 
