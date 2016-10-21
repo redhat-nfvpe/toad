@@ -1,24 +1,26 @@
 # vim: ft=ansible
 ---
 - hosts: elasticsearch
+  become: true
   tags:
     - elasticsearch
     - elk
 
   vars_files:
-    - "{{ inventory_dir  }}/../vars/main.yml"
+    - "{{ inventory_dir  }}/{{ vars_files_relative }}/vars/main.yml"
 
   roles:
     - { role: 'geerlingguy.repo-epel' }
     - { role: 'leifmadsen.elasticsearch' }
 
 - hosts: logstash
+  become: true
   tags:
     - logstash
     - elk
 
   vars_files:
-    - "{{ inventory_dir  }}/../vars/main.yml"
+    - "{{ inventory_dir  }}/{{ vars_files_relative }}/vars/main.yml"
 
   roles:
     - { role: 'geerlingguy.repo-epel' }
@@ -26,12 +28,13 @@
     - { role: 'leifmadsen.logstash' }
 
 - hosts: kibana
+  become: true
   tags:
     - kibana
     - elk
 
   vars_files:
-    - "{{ inventory_dir  }}/../vars/main.yml"
+    - "{{ inventory_dir  }}/{{ vars_files_relative }}/vars/main.yml"
 
   roles:
     - { role: 'geerlingguy.repo-epel' }
@@ -39,6 +42,11 @@
     - { role: 'leifmadsen.kibana-4' }
 
   post_tasks:
+    - name: Ensure libsemanage-python is installed
+      yum:
+        name: libsemanage-python
+        state: present
+
     - name: Validate SELinux is enabled
       selinux:
         policy: targeted

@@ -4,5 +4,6 @@ hosts/
 !hosts/containers
 roles/
 inventory
-files/jobs/
-files/nfv_jobs_config/
+files/
+!files/filebeat.yml
+.vagrant/

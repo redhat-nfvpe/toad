@@ -6,18 +6,36 @@ Deploy a continuous integration reference architecture with Jenkins to test
 OpenStack with [TripleO
 Quickstart](https://github.com/openstack/tripleo-quickstart).
 
-## Requirements
+# Requirements
+
+There are two ways to install CIRA. You deploy locally into a development
+environment using Vagrant, or you can deploy to an OpenStack instance. Below
+you will find the list of requirements for each of the deployment scenarios.
+
+For Ansible, several roles are required, and you can install them as follows:
+
+    ansible-galaxy install -r requirements.yml
+
+## Vagrant
+
+Deployment to Vagrant should be straight forward. The only real dependency is
+Vagrant itself, along with whatever provider backend you wish to utilize. Our
+preferred provider is libvirt (KVM). In order to use Vagrant with the libvirt
+provider, you'll need to install a new provider plugin.
+
+    vagrant plugin install vagrant-libvirt
+
+Additional information about other dependencies required by vagrant-libvirt are
+available at https://github.com/vagrant-libvirt/vagrant-libvirt
+
+## OpenStack
 
 You'll need to install the `shade` dependency so that you can interact with
 OpenStack (assuming you are deploying to an OpenStack cloud).
 
     pip install --user shade
 
-For Ansible, several roles are required, and you can install them as follows:
-
-    ansible-galaxy install -r requirements.yml
-
-## Setup OpenStack Connection
+### Setup OpenStack Connection
 
 If you're going to install to an OpenStack cloud, you'll need to configure a
 cloud to connect to. You can do this by creating the `~/.config/openstack/`
@@ -39,11 +57,17 @@ In order to use docker, you need to insatll [docker-compose](https://docs.docker
 
 At present, we tested in docker-compose 1.7.1, build 6c289830.
 
-## Overrides / Private Info
+# Overrides / Private Info
 
 There may be some variables you don't want to expose into a Git repo. You can
-store those in the `~/.ansible/vars/cira_vars.yml` file. For example, the
-following variables are being utilized by the author:
+store those in the `~/.ansible/vars/cira_vars.yml` file.
+
+> **NOTE**: You *must* create a `~/.ansible/vars/cira_vars.yml` file, even if
+> it is blank. This file is loaded via `var_files` directives in Ansible and
+> your deployment will fail if the file doesn't exist.
+
+The following list of options are required when deploying to an OpenStack
+cloud:
 
 **Cloud Configuration**
 * cloud_name_prefix
@@ -54,17 +78,20 @@ following variables are being utilized by the author:
 * cloud_flavor
 * cloud_key_name
 
-**Jenkins Job Builder Configuration**
-* jenkins_job_builder_git_jobs_src
-* jenkins_job_config_git_src
-* jenkins_job_builder_config_jenkins_user
-* jenkins_job_builder_config_jenkins_password
+The `jenkins_scp_sites` variable is required when you need to copy
+configuration files off the slave to the master. Note that the hostname is
+relative to the master (in this case, files are copied off the slave *into* the
+master node, since that's where the SCP command is run).
 
 **SCP Site Configuration**
 
     jenkins_scp_sites:
       - hostname: 127.0.0.1
-        path: "{{ jenkins_master_results_directory  }}"
+        path: "{{ jenkins_master_results_directory }}"
+
+When adding slaves, you would do so by creating a new file in the `hosts/`
+directory. For example you would create a `hosts/slaves` file and add your
+Jenkins slaves via the `[jenkins_slave]` and `[jenkins_slave:vars]` headers.
 
 **Jenkins Slave Configuration**
 * slave_name
@@ -75,7 +102,7 @@ following variables are being utilized by the author:
 * slave_credentialsId
 * slave_label
 
-### Example Override Variable File
+## Example Override Variable File
 Many of the values can be found in your OpenStack RC file, which can typically
 be found in the _Access & Security_ section of the Horizon dashboard.
 
@@ -86,20 +113,35 @@ be found in the _Access & Security_ section of the Horizon dashboard.
     cloud_image: c0a97bbd-0cdd-4ed1-b6c1-052123456789    # unique image ID
     cloud_flavor: m1.medium
     cloud_key_name: my_pub_key                 # name of your keypair
-
+ 
     jenkins_job_builder_git_jobs_src: gitserver.tld:leifmadsen/nfv-jenkins-jobs.git   # branched from upstream for customization purposes
     jenkins_job_config_git_src: gitserver.tld:nfvpe/nfv-job-configs.git
     jenkins_job_builder_config_jenkins_user: admin       # default username
     jenkins_job_builder_config_jenkins_password: admin   # default password
-
+ 
     # Can only specify a single site to SCP files to at the end of the run.
     jenkins_scp_sites:
       - hostname: 127.0.0.1
         path: "{{ jenkins_master_results_directory }}"   # defined in vars/main.yml
 
-## Deployment
+# Deployment
 
-### Base Deployment
+Deployment can be done via two methods: OpenStack cloud, or Vagrant development
+environment.
+
+## Base Deployment (Vagrant)
+
+Deploying into a Vagrant development environment should be as simple as
+running:
+
+    vagrant up
+
+This will deploy all the virtual machines and apply the `site.yml` Ansible
+configuration to the virtual machines. The deployment uses the built in default
+networking configuration that Vagrant instantiates. At the end of the run, the
+web interface addresses for Jenkins and Kibana will be displayed.
+
+## Base Deployment (OpenStack)
 
 You may need to modify the `host_vars/localhost` file to adjust the
 `security_group` names, as the playbook does not currently create security
@@ -114,6 +156,10 @@ security groups, and opened the corresponding ports:
   * `TCP: 5044`
 * web_ports
   * `TCP: 80, 443`
+
+> **NOTE**: The security groups are only relevant for OpenStack cloud
+> deployments. There are no firewall rules managed by CIRA within a Vagrant
+> deployment.
 
 The base set of four VMs created for the CI components in OpenStack are listed
 as follows (as defined in `host_vars/localhost`):

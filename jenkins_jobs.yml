@@ -1,14 +1,16 @@
+# vim: ft=ansible
 ---
 ######################
 # Deploy jobs via JJB
 ######################
 - hosts: jenkins_master
+  become: true
   tags:
     - jenkins_master
     - jenkins_jobs
 
   vars_files:
-    - "{{ inventory_dir  }}/../vars/main.yml"
+    - "{{ inventory_dir  }}/{{ vars_files_relative }}/vars/main.yml"
     - ~/.ansible/vars/cira_vars.yml
 
   pre_tasks:
@@ -30,6 +32,17 @@
         value: false
       when: http_sslVerify.config_value != 'false'
 
+    - name: Locally clone Jenkins job configs
+      git:
+        repo: "{{ jenkins_job_config_git_src }}"
+        dest: "{{ jenkins_job_config_file_src }}"
+        version: master
+        force: yes
+        accept_hostkey: yes
+      delegate_to: localhost
+      changed_when: false
+      become: false
+
     - name: Locally clone Jenkins jobs
       git:
         repo: "{{ jenkins_job_builder_git_jobs_src }}"
@@ -41,30 +54,21 @@
       changed_when: false
       tags:
         - clone_jobs
+      become: false
 
     - name: Create folder to store config
       file:
-        path: "{{ jenkins_job_config_file_src }}"
+        path: "{{ jenkins_job_config_file_dest }}"
         state: directory
         recurse: yes
         mode: "0755"
         owner: jenkins
         group: jenkins
 
-    - name: Locally clone Jenkins job configs
-      git:
-        repo: "{{ jenkins_job_config_git_src }}"
-        dest: "./files/nfv_jobs_config"
-        version: master
-        force: yes
-        accept_hostkey: yes
-      delegate_to: localhost
-      changed_when: false
-
     - name: Synchronize job config to remote server
       synchronize:
-        src: "./files/nfv_jobs_config/"
-        dest: "{{ jenkins_job_config_file_src }}"
+        src: "{{ jenkins_job_config_file_src }}"
+        dest: "{{ jenkins_job_config_file_dest }}"
         archive: yes
       when: deploy_type is not defined or deploy_type != 'docker'
 
@@ -79,15 +83,16 @@
 
   post_tasks:
     - name: Synchronize JJB config to remote server
-      become: no
+      become: true
+      become_user: jenkins
       synchronize:
         delete: yes
         dest: "{{ jenkins_job_builder_file_jobs_dest }}"
         perms: yes
         src: "{{ item }}"
-      when: jenkins_job_builder_file_jobs_src != "" and
+      when: jenkins_job_builder_job_files != "" and
             (deploy_type is not defined or deploy_type != 'docker')
-      with_items: "{{ jenkins_job_builder_file_jobs_src }}"
+      with_items: "{{ jenkins_job_builder_job_files }}"
       notify:
         - Check jenkins
         - Reload jenkins-jobs

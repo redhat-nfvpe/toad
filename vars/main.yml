@@ -18,14 +18,26 @@ jenkins_plugins:
   - ws-cleanup
   - xtrigger
   - envinject
-jenkins_scp_sites: []
+jenkins_scp_sites:
+  - hostname: 127.0.0.1
+    path: "{{ jenkins_master_results_directory }}"
 
 # JJB Configuration
-jenkins_job_builder_config_jenkins_url: http://localhost:8080
-jenkins_job_builder_file_jobs_src: "./files/jobs/"
+jenkins_job_builder_config_jenkins_user: admin
+jenkins_job_builder_config_jenkins_password: admin
+jenkins_job_builder_config_jenkins_url: "http://localhost:8080"
 jenkins_job_builder_config_job_builder_recursive: True
-jenkins_job_config_file_src: /var/lib/jenkins/userContent/config
+jenkins_job_builder_git_jobs_src: "https://github.com/redhat-nfvpe/jenkins-jobs.git"
+jenkins_job_builder_file_jobs_src: "./files/jenkins-jobs"
 jenkins_job_builder_handler_check_retries: 10
+jenkins_job_builder_job_files:
+  - "{{ jenkins_job_builder_file_jobs_src  }}/globals/"
+  - "{{ jenkins_job_builder_file_jobs_src  }}/project-cira.yaml"
+
+jenkins_job_config_git_src: "https://github.com/redhat-nfvpe/job-configs.git"
+jenkins_job_config_file_src: "./files/job-configs"
+jenkins_job_config_file_dest: "/var/lib/jenkins/userContent/config"
+
 
 # Logstash Configuration
 logstash_configuration_files:
