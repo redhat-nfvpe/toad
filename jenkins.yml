@@ -24,18 +24,12 @@
 
   pre_tasks:
     - name: Add jenkins service unit to systemd in case of docker.
-      copy:
+      template:
+        src: jenkins_systemd.j2
         dest: /etc/systemd/system/jenkins.service
-        content: |
-            [Unit]
-            Description=Jenkins Daemon
-
-            [Service]
-            ExecStart=/usr/bin/java -Dcom.sun.akuma.Daemon=daemonized -Djava.awt.headless=true -Djenkins.install.runSetupWizard=false -DJENKINS_HOME=/var/lib/jenkins -jar /usr/lib/jenkins/jenkins.war --logfile=/var/log/jenkins/jenkins.log --webroot=/var/cache/jenkins/war --daemon --httpPort=8080 --debug=5 --handlerCountMax=100 --handlerCountMaxIdle=20 --prefix=
-            User=jenkins
-
-            [Install]
-            WantedBy=multi-user.target
+        owner: root
+        group: root
+        mode: "0655"
       when: deploy_type is defined and deploy_type == 'docker'
 
   tasks:

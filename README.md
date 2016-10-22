@@ -8,8 +8,8 @@ Quickstart](https://github.com/openstack/tripleo-quickstart).
 
 # Requirements
 
-There are two ways to install CIRA. You deploy locally into a development
-environment using Vagrant, you can deploy locally into a docker container
+There are multiple ways to install CIRA. You deploy locally into a development
+environment using Vagrant; you can deploy locally into a Docker container
 or you can deploy to an OpenStack instance. Below you will find the list of 
 requirements for each of the deployment scenarios.
 
@@ -31,11 +31,11 @@ available at https://github.com/vagrant-libvirt/vagrant-libvirt
 
 ## Docker
 
-ansible-cira also supports docker container instead of OpenStack and Vagrant.
-In order to use docker, you need to insatll 
+In addition to support OpenStack and Vagrant deployments, ansible-cira also
+utilize Docker containers. In order to use Docker, you need to install
 [docker-compose](https://docs.docker.com/compose/).
 
-At present, we tested in docker-compose 1.7.1, build 6c289830.
+At present, we tested using docker-compose 1.7.1, build 6c289830.
 
 ## OpenStack
 
@@ -153,11 +153,11 @@ with the following template:
     elasticsearch
     kibana
 
-These name (e.g. jenkins_master, logstash...) should be matched with container name in cira-container.yml.
+These names (e.g. jenkins_master, logstash, etc) should match the names as defined in 'docker-compose.yml'.
 
-### Adding baremetal slaves into docker deployment
+### Adding baremetal slaves to a Docker deployment
 If you need to add jenkins slaves (baremetal), add slave information in 'hosts/containers'
-as following (please add 'ansible_connection=ssh').
+as the following (be sure to add `ansible_connection=ssh` as well).
 
     [jenkins_slave]
     slave01 ansible_connection=ssh ansible_host=10.10.1.1 ansible_user=ansible
@@ -169,8 +169,8 @@ as following (please add 'ansible_connection=ssh').
     slave_credentialsId=stack-credential
     slave_label=cira
 
-### Running container and start provisioning
-Then, you can run following commands to setup containers and to setup cira environments.
+### Running containers and start provisioning
+Then, you can run the following commands to setup containers and to setup the CIRA environment.
 
     $ docker-compose up -d
     $ ansible-playbook site.yml -vvvv -i hosts/containers \
@@ -182,7 +182,7 @@ After you finish, you can stop these containers and restart them.
     (To restart them)
     $ docker-compose restart
 
-The following commands deletes container.
+The following commands delete the containers.
 
     $ docker-compose down
 
