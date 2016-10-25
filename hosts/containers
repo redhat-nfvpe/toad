@@ -1,0 +1,6 @@
+# This inventry file is for container (docker case)
+# these names map to container name
+jenkins_master
+logstash
+elasticsearch
+kibana

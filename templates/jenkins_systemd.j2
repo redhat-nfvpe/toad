@@ -1,0 +1,9 @@
+[Unit]
+Description=Jenkins Daemon
+
+[Service]
+ExecStart=/usr/bin/java -Dcom.sun.akuma.Daemon=daemonized -Djava.awt.headless=true -Djenkins.install.runSetupWizard=false -DJENKINS_HOME=/var/lib/jenkins -jar /usr/lib/jenkins/jenkins.war --logfile=/var/log/jenkins/jenkins.log --webroot=/var/cache/jenkins/war --daemon --httpPort=8080 --debug=5 --handlerCountMax=100 --handlerCountMaxIdle=20 --prefix=
+User=jenkins
+
+[Install]
+WantedBy=multi-user.target

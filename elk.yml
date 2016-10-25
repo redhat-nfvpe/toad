@@ -51,9 +51,13 @@
       selinux:
         policy: targeted
         state: enforcing
+      when: ansible_connection != 'docker'
+      #when: deploy_type is not defined or deploy_type != 'docker'
 
     - name: SELinux -- Enable httpd_can_network_connect
       seboolean:
         name: httpd_can_network_connect
         state: yes
         persistent: yes
+      when: ansible_connection != 'docker'
+      #when: deploy_type is not defined or deploy_type != 'docker'

@@ -22,6 +22,16 @@
     sudo_defaults:
       - defaults: '!requiretty'
 
+  pre_tasks:
+    - name: Add jenkins service unit to systemd in case of docker.
+      template:
+        src: jenkins_systemd.j2
+        dest: /etc/systemd/system/jenkins.service
+        owner: root
+        group: root
+        mode: "0655"
+      when: deploy_type is defined and deploy_type == 'docker'
+
   tasks:
     - name: Set facts for later use
       set_fact:
@@ -31,6 +41,13 @@
         jenkins_url_prefix: "{{ jenkins_url_prefix }}"
         jenkins_admin_username: "{{ jenkins_admin_username }}"
         jenkins_admin_password: "{{ jenkins_admin_password }}"
+
+# In case of docker, jenkins is managed under systemd unit (see above)
+    - name: jenkins init script is removed in case of docker
+      file:
+        path: /etc/init.d/jenkins
+        state: absent
+      when: deploy_type is defined and deploy_type == 'docker'
 
     - name: Install python-pip
       yum:
@@ -68,12 +85,14 @@
       selinux:
         policy: targeted
         state: enforcing
+      when: ansible_connection != 'docker'
 
     - name: SELinux -- Enable httpd_can_network_connect
       seboolean:
         name: httpd_can_network_connect
         state: yes
         persistent: yes
+      when: ansible_connection != 'docker'
 
     # Copy in configuration for Nginx web proxy fronting Jenkins web UI
     - name: Copy Jenkins Nginx Configuration
