@@ -185,6 +185,15 @@
         - skip_ansible_lint
         - jenkins_ssh
 
+    - name: Create log directory for images
+      file:
+          path: /var/log/artib
+          state: directory
+          owner: stack
+          group: stack
+          mode: "0755"
+      become: true
+
 ########################
 # Setup SSH connections
 ########################
