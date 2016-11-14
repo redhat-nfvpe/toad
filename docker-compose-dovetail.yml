@@ -1,0 +1,63 @@
+version: '2'
+
+# docker-compose file to launch jenkins_master/ELK stack instead of VM, 
+# with dovetail project container from OPNFV.
+services:
+  jenkins_master:
+    build: 
+      context: ./dockerfiles 
+      dockerfile: centos7_base
+    container_name: jenkins_master
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - /run
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    entrypoint: /sbin/init
+
+  logstash:
+    build: 
+      context: ./dockerfiles 
+      dockerfile: centos7_base
+    container_name: logstash
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - /run
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    entrypoint: /sbin/init
+
+  elasticsearch:
+    build: 
+      context: ./dockerfiles 
+      dockerfile: centos7_base
+    container_name: elasticsearch
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - /run
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    entrypoint: /sbin/init
+
+  kibana:
+    build: 
+      context: ./dockerfiles 
+      dockerfile: centos7_base
+    container_name: kibana
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - /run
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    entrypoint: /sbin/init
+
+  dovetail:
+    build: 
+      context: ./dockerfiles 
+      dockerfile: centos7_dovetail
+    container_name: dovetail
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    entrypoint: /sbin/init
