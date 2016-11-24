@@ -35,7 +35,7 @@ jenkins_job_builder_job_files:
   - "{{ jenkins_job_builder_file_jobs_src  }}/project-cira.yaml"
 
 jenkins_job_config_git_src: "https://github.com/redhat-nfvpe/job-configs.git"
-jenkins_job_config_file_src: "./files/job-configs"
+jenkins_job_config_file_src: "./files/job-configs/"
 jenkins_job_config_file_dest: "/var/lib/jenkins/userContent/config"
 
 
