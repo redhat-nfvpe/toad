@@ -95,6 +95,7 @@
         - skip_ansible_lint
 
     - name: Add authorized host keys to authorized_keys
+      become: true
       become_user: stack
       ignore_errors: yes
       authorized_key:
@@ -137,6 +138,7 @@
         - skip_ansible_lint
 
     - name: Add Jenkins slave SSH fingerprint to known hosts
+      become: true
       become_user: jenkins
       known_hosts:
         name: "{{ jenkins_slave_ssh_hostname }}"
