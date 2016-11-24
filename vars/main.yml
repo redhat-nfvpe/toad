@@ -21,6 +21,8 @@ jenkins_plugins:
 jenkins_scp_sites:
   - hostname: 127.0.0.1
     path: "{{ jenkins_master_results_directory }}"
+java_version:
+  - java-1.8.0-openjdk
 
 # JJB Configuration
 jenkins_job_builder_config_jenkins_user: admin
