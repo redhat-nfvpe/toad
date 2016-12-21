@@ -124,11 +124,12 @@ Each hardware environment needs the following content:
    deployment. There can be custom roles for preparing the virtualized
    environment, deploying overcloud, etc... A sample requirements file looks
    like:
-
+   ```
    git+https://github.com/redhat-openstack/ansible-role-tripleo-validate-ipmi.git/#egg=ansible-role-tripleo-validate-ipmi
    git+https://github.com/redhat-openstack/ansible-role-tripleo-baremetal-overcloud.git/#egg=ansible-role-tripleo-baremetal-overcloud
    git+https://github.com/redhat-openstack/ansible-role-tripleo-baremetal-prep-virthost/#egg=ansible-role-tripleo-baremetal-prep-virthost
    git+https://github.com/redhat-openstack/ansible-role-tripleo-overcloud/#egg=ansible-role-tripleo-overcloud
+   ```
 
 **How to run the baremetal job**
 
