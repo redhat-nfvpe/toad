@@ -6,6 +6,14 @@ Deploy a continuous integration reference architecture with Jenkins to test
 OpenStack with [TripleO
 Quickstart](https://github.com/openstack/tripleo-quickstart).
 
+CIRA is used as a simple spin-up environment to bootstrap a testing
+infrastructure with the ability to run tests with TripleO Quickstart, and parse
+logs and write data into an ELK stack for data visualization.
+
+Find below an image of how the general workflow happens within CIRA:
+
+![CIRA Workflow][cira_workflow]
+
 # Requirements
 
 There are multiple ways to install CIRA. You deploy locally into a development
@@ -288,5 +296,7 @@ been previously created, and that you can login either via SSH keys, or provide
 the `--ask-pass` flag to your Ansible run. The `ansible` user is also assumed
 to have been setup with passwordless sudo (unless you add `--ask-become-pass`
 during your Ansible run).
+
+[cira_workflow]: https://github.com/redhat-nfvpe/CIRA_Workflow.png
 
 [//]: # (vim: set filetype=markdown:expandtab)
