@@ -130,28 +130,29 @@ Each hardware environment needs the following content:
 A final TripleO Quickstart deployment with baremetal follows the same process
 as a virtualized one, but adding extra configs and requirements. A sample call
 will look like:
-    ```bash
-    git clone https://git.openstack.org/openstack/tripleo-quickstart.git
-    cd tripleo-quickstart
-    export VIRTHOST=127.0.0.2
-    export HW_ENV_DIR=${WORKSPACE}/config/hw_environments/tef
-    sudo bash ./quickstart.sh --install-deps
-    bash quickstart.sh \
-      --working-dir /home/jenkins/quickstart \
-      --bootstrap \
-      --tags all \
-      --skip-tags overcloud-validate \
-      --no-clone \
-      --teardown all \
-      --requirements ${WORKSPACE}/config/requirements/quickstart-role-baremetal-requirements.txt \
-      --requirements $HW_ENV_DIR/network_configs/single_nic_vlans/requirements_files/baremetal-virt-undercloud.txt \
-      --config $HW_ENV_DIR/network_configs/single_nic_vlans/config_files/config.yml \
-      --extra-vars @$HW_ENV_DIR/network_configs/single_nic_vlans/env_settings.yml \
-      --playbook baremetal-virt-undercloud-tripleo.yml \
-      --extra-vars undercloud_instackenv_template=$HW_ENV_DIR/instackenv.json \
-      --extra-vars network_environment_file=$HW_ENV_DIR/network_configs/single_nic_vlans/single_nic_vlans.yml \
-      --extra-vars nic_configs_dir=$HW_ENV_DIR/network_configs/single_nic_vlans/nic_configs/ \
-      --extra-vars jenkins_workspace=${WORKSPACE} \
-      --release mitaka \
-      $VIRTHOST
-      ```
+
+```bash
+git clone https://git.openstack.org/openstack/tripleo-quickstart.git
+cd tripleo-quickstart
+export VIRTHOST=127.0.0.2
+export HW_ENV_DIR=${WORKSPACE}/config/hw_environments/tef
+sudo bash ./quickstart.sh --install-deps
+bash quickstart.sh \
+  --working-dir /home/jenkins/quickstart \
+  --bootstrap \
+  --tags all \
+  --skip-tags overcloud-validate \
+  --no-clone \
+  --teardown all \
+  --requirements ${WORKSPACE}/config/requirements/quickstart-role-baremetal-requirements.txt \
+  --requirements $HW_ENV_DIR/network_configs/single_nic_vlans/requirements_files/baremetal-virt-undercloud.txt \
+  --config $HW_ENV_DIR/network_configs/single_nic_vlans/config_files/config.yml \
+  --extra-vars @$HW_ENV_DIR/network_configs/single_nic_vlans/env_settings.yml \
+  --playbook baremetal-virt-undercloud-tripleo.yml \
+  --extra-vars undercloud_instackenv_template=$HW_ENV_DIR/instackenv.json \
+  --extra-vars network_environment_file=$HW_ENV_DIR/network_configs/single_nic_vlans/single_nic_vlans.yml \
+  --extra-vars nic_configs_dir=$HW_ENV_DIR/network_configs/single_nic_vlans/nic_configs/ \
+  --extra-vars jenkins_workspace=${WORKSPACE} \
+  --release mitaka \
+  $VIRTHOST
+```
