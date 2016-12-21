@@ -297,6 +297,6 @@ the `--ask-pass` flag to your Ansible run. The `ansible` user is also assumed
 to have been setup with passwordless sudo (unless you add `--ask-become-pass`
 during your Ansible run).
 
-[cira_workflow]: https://github.com/redhat-nfvpe/CIRA_Workflow.png
+[cira_workflow]: https://github.com/redhat-nfvpe/ansible-cira/blob/master/CIRA_Workflow.png
 
 [//]: # (vim: set filetype=markdown:expandtab)
