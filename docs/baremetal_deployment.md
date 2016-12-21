@@ -89,7 +89,7 @@ Each hardware environment needs the following content:
     ```yaml
     environment_type: name_of_your_hw_environment
     hw_env: same
-    network_environment_file: "{{ lookup('env', 'WORKSPACE') }}/config/hw_environments/tef/network_configs/single_nic_vlans/single_nic_vlans.yml"
+    network_environment_file: "{{ lookup('env', 'WORKSPACE') }}/config/hw_environments/env/network_configs/single_nic_vlans/single_nic_vlans.yml"
     undercloud_network_cidr: 192.0.2.0/24
     undercloud_external_network_cidr: 10.0.0.1/24
     undercloud_network_gateway: 192.0.2.254
@@ -112,13 +112,18 @@ Each hardware environment needs the following content:
     external_network_gateway: 10.8.125.254
     ```
 
- - **network_configs/single_nic_vlans/single_nic_vlans.yml:** This is the file referenced by network_environment file. It contains the TripleO configuration for
-  the overcloud deployment, specifically for our hardware and network environment. Please refer to 
-  http://git.openstack.org/cgit/openstack/tripleo-heat-templates/tree/environments/network-environment.yaml.
+ - **network_configs/single_nic_vlans/single_nic_vlans.yml:** This is the file
+   referenced by `network_environment` file. It contains the TripleO
+   configuration for the overcloud deployment, specifically for our hardware
+   and network environment. Please refer to
+   http://git.openstack.org/cgit/openstack/tripleo-heat-templates/tree/environments/network-environment.yaml.
 
 
- - **network_configs/single_nic_vlans/requirements_files/baremetal-virt-undercloud.txt:** This will allow to bring all the specific ansible roles needed for baremetal deployment.
-   There can be custom roles for preparing the virtualized environment, deploying overcloud, etc... A sample requirements file looks like:
+ - **network_configs/single_nic_vlans/requirements_files/baremetal-virt-undercloud.txt:**
+   This will allow to bring all the specific ansible roles needed for baremetal
+   deployment. There can be custom roles for preparing the virtualized
+   environment, deploying overcloud, etc... A sample requirements file looks
+   like:
 
    git+https://github.com/redhat-openstack/ansible-role-tripleo-validate-ipmi.git/#egg=ansible-role-tripleo-validate-ipmi
    git+https://github.com/redhat-openstack/ansible-role-tripleo-baremetal-overcloud.git/#egg=ansible-role-tripleo-baremetal-overcloud
@@ -135,7 +140,7 @@ will look like:
 git clone https://git.openstack.org/openstack/tripleo-quickstart.git
 cd tripleo-quickstart
 export VIRTHOST=127.0.0.2
-export HW_ENV_DIR=${WORKSPACE}/config/hw_environments/tef
+export HW_ENV_DIR=${WORKSPACE}/config/hw_environments/env
 sudo bash ./quickstart.sh --install-deps
 bash quickstart.sh \
   --working-dir /home/jenkins/quickstart \
