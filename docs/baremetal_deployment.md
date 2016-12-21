@@ -1,5 +1,4 @@
-Deploying to baremetal
-====================
+# Deploying to baremetal
 
 This document will cover how to do deployments on baremetal using
 **tripleo-quickstart**. When deploying to baremetal, there are two possible
@@ -8,9 +7,8 @@ scenarios:
  1. both undercloud and overcloud are deployed on baremetal directly
  2. undercloud is virtualized and overcloud is deployed on baremetal
 
-Case 2: virtualized undercloud, baremetal in overcloud
------------------------------------------------------------------------- The
-Use case that is currently supported on **ansible-cira** is to have a
+# Case 2: virtualized undercloud, baremetal in overcloud
+The use case that is currently supported on **ansible-cira** is to have a
 virtualized undercloud, and a baremetal overcloud.
 
 **Requirements**
@@ -27,7 +25,7 @@ To perform baremetal deployments, there are the following requirements:
 
 In terms of ansible roles, it needs a different set of requirements than
 TripleO quickstart. To consume them, please define a
-``quickstart-role-baremetla-requirements.txt`` file that will contain following
+`quickstart-role-baremetla-requirements.txt` file that will contain following
 dependencies:
 
 - git+https://github.com/redhat-openstack/ansible-role-tripleo-cleanup-nfo.git/#egg=ansible-role-tripleo-cleanup-nfo
@@ -39,10 +37,10 @@ dependencies:
 - git+https://github.com/redhat-openstack/ansible-role-tripleo-overcloud-scale-nodes.git#egg=ansible-role-tripleo-overcloud-scale-nodes
 - git+https://github.com/redhat-openstack/ansible-role-tripleo-undercloud-post.git/#egg=ansible-role-tripleo-undercloud-post
 
-**Configuration**
+# Configuration
 
 CIRA relies on a config repo, that stores all private info for jobs to run. You
-can specify that repo using the ``jenkins_job_config_git_src`` parameter. You
+can specify that repo using the `jenkins_job_config_git_src` parameter. You
 can see a sample of job config repo at
 https://github.com/redhat-nfvpe/job-configs/.
 
@@ -56,7 +54,7 @@ Each hardware environment needs the following content:
 
  - **instackenv.json:** ironic inventory with all the servers to be enrolled is
    defined here. It needs to follow that schema:
-
+    ```json
     {
       "nodes": [
         {
@@ -74,9 +72,10 @@ Each hardware environment needs the following content:
         }
       ]
     }
+    ```
 
  - **network_configs:** different kind of network configurations can be on that
-   folder. In our case, we are starting with single_nic_vlans
+   folder. In our case, we are starting with `single_nic_vlans`
  - **network_configs/single_nic_vlans:** subfolder containing all settings
    needed for that kind of network deployment on that hardware environment.
  - **network_configs/single_nic_vlans/env_settings.yml:** tripleo-quickstart
