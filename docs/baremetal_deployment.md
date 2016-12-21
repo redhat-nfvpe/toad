@@ -86,7 +86,7 @@ Each hardware environment needs the following content:
    - https://github.com/redhat-openstack/ansible-role-tripleo-baremetal-prep-virthost/blob/master/defaults/main.yml
 
    It follows this schema:
-
+    ```yaml
     environment_type: name_of_your_hw_environment
     hw_env: same
     network_environment_file: "{{ lookup('env', 'WORKSPACE') }}/config/hw_environments/tef/network_configs/single_nic_vlans/single_nic_vlans.yml"
@@ -110,6 +110,7 @@ Each hardware environment needs the following content:
     floating_ip_start: 10.8.125.161
     floating_ip_end: 10.8.125.170
     external_network_gateway: 10.8.125.254
+    ```
 
  - **network_configs/single_nic_vlans/single_nic_vlans.yml:** This is the file referenced by network_environment file. It contains the TripleO configuration for
   the overcloud deployment, specifically for our hardware and network environment. Please refer to 
@@ -129,7 +130,7 @@ Each hardware environment needs the following content:
 A final TripleO Quickstart deployment with baremetal follows the same process
 as a virtualized one, but adding extra configs and requirements. A sample call
 will look like:
-
+    ```bash
     git clone https://git.openstack.org/openstack/tripleo-quickstart.git
     cd tripleo-quickstart
     export VIRTHOST=127.0.0.2
@@ -153,3 +154,4 @@ will look like:
       --extra-vars jenkins_workspace=${WORKSPACE} \
       --release mitaka \
       $VIRTHOST
+      ```
