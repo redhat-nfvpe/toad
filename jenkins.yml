@@ -136,7 +136,7 @@
         state: directory
         owner: jenkins
         group: jenkins
-        mode: "0700"
+        mode: "0755"
 
 #######################
 # Deploy Jenkins Slave
