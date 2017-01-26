@@ -17,4 +17,9 @@ server {
         root {{ jenkins_home }};
         autoindex on;
     }
+
+    location /logs {
+        alias /srv/static$1;
+        autoindex on;
+    }
 }
