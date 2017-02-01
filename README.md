@@ -112,6 +112,12 @@ Jenkins slaves via the `[jenkins_slave]` and `[jenkins_slave:vars]` headers.
 * slave_credentialsId
 * slave_label
 
+On RedHat system, subscription of slaves can be managed automatically
+if you pass the right credentials:
+* rhn_subscription_username
+* rhn_subscription_password
+* rhn_subscription_pool_id
+
 ## Example Override Variable File
 Many of the values can be found in your OpenStack RC file, which can typically
 be found in the _Access & Security_ section of the Horizon dashboard.

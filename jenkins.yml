@@ -194,6 +194,15 @@
           mode: "0755"
       become: true
 
+    - name: Subscribe for RedHat systems
+      redhat_subscription:
+          state: present
+          username: "{{ rhn_subscription_username }}"
+          password: "{{ rhn_subscription_password }}"
+          pool: "{{ rhn_subscription_pool_id }}"
+      become: true
+      when: ansible_os_family == "RedHat" and rhn_subscription_username is defined and rhn_subscription_password is defined and rhn_subscription_pool_id is defined
+
 ########################
 # Setup SSH connections
 ########################
