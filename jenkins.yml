@@ -222,6 +222,16 @@
               - createrepo
               - vsftpd
               - yum-utils
+
+        - name: Create temporary directory for mirror
+          file:
+              path: /var/log/artib
+              state: directory
+              mode: "0755"
+
+        - name: Mirror repository locally
+          shell: reposync -l -n -p /tmp/osp_repo/
+
       become: true
       when: ansible_os_family == "RedHat" and slave_mirror_sync|bool == true
 
