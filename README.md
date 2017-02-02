@@ -303,6 +303,10 @@ the `--ask-pass` flag to your Ansible run. The `ansible` user is also assumed
 to have been setup with passwordless sudo (unless you add `--ask-become-pass`
 during your Ansible run).
 
+For OSP deployments, the build slaves need to be registered under RHN, and
+repositories and guest images need to be synced locally. In order to enable
+repository sync, you need to set the ``slave_mirror_sync`` var to ``true``.
+
 [cira_workflow]: https://github.com/redhat-nfvpe/ansible-cira/blob/master/CIRA_Workflow.png
 
 [//]: # (vim: set filetype=markdown:expandtab)
