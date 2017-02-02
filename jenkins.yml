@@ -230,7 +230,10 @@
               mode: "0755"
 
         - name: Mirror repository locally
-          shell: reposync -l -n -p /tmp/osp_repo/
+          shell: "reposync -l -n -p /tmp/osp_repo/ > /dev/null"
+
+        - name: Create repositories from local mirror
+          shell: "for DIR in `find /tmp/osp_repo  -maxdepth 1 -mindepth 1 -type d`; do createrepo $DIR; done; > /dev/null"
 
       become: true
       when: ansible_os_family == "RedHat" and slave_mirror_sync|bool == true
