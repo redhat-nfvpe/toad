@@ -248,17 +248,24 @@
               state: enabled
           when: iptables_service_status.stdout != 'active'
 
+        - name: Check if repo already exists
+          stat: path=/tmp/osp_repo
+          register: repo_already_exists
+
         - name: Create temporary directory for mirror
           file:
               path: /tmp/osp_repo
               state: directory
               mode: "0755"
+          when: repo_already_exists.stat.exists == False
 
         - name: Mirror repository locally
-          shell: "reposync -l -n -p /tmp/osp_repo/ > /dev/null"
+          shell: "reposync -l -n -p /tmp/osp_repo/ > /dev/null"i
+          when: repo_already_exists.stat.exists == False
 
         - name: Create repositories from local mirror
           shell: "for DIR in `find /tmp/osp_repo  -maxdepth 1 -mindepth 1 -type d`; do createrepo $DIR; done; > /dev/null"
+          when: repo_already_exists.stat.exists == False
 
       become: true
       when: ansible_os_family == "RedHat" and slave_mirror_sync|bool == true
