@@ -268,7 +268,7 @@
           when: repo_already_exists.stat.exists == False
 
         - name: Execute repository creation script
-          script: "./scripts/create_repo.sh /tmp/osp_repo"
+          script: "./scripts/create_repo.sh /tmp osp_repo"
           when: repo_already_exists.stat.exists == True
 
       become: true
