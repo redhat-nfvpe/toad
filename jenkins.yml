@@ -229,6 +229,25 @@
               enabled: yes
               state: started
 
+        - name: Check if iptables is running
+          command: systemctl is-active iptables
+          ignore_errors: yes
+          changed_when: false
+          register: iptables_service_status
+
+        - name: Open firewall port for input ftp (iptables)
+          shell: "iptables -A INPUT  -p tcp -m tcp --dport 21 -m conntrack --ctstate ESTABLISHED,NEW -j ACCEPT -m comment --comment 'Allow ftp connections to port 21'"
+
+        - name: Open firewall port for output ftp (iptables)
+          shell: "iptables -A INPUT  -p tcp -m tcp --dport 21 -m conntrack --ctstate ESTABLISHED,NEW -j ACCEPT -m comment --comment 'Allow ftp connections from port 21'"
+
+        - name: Open firewall port for ftp (firewall)
+          firewalld:
+              service: ftp
+              permanent: true
+              state: enabled
+          when: iptables_service_status.stdout != 'active'
+
         - name: Create temporary directory for mirror
           file:
               path: /tmp/osp_repo
