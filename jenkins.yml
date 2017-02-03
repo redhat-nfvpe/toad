@@ -223,9 +223,15 @@
               - vsftpd
               - yum-utils
 
+        - name: Enable vsftpd service
+          service:
+              name: vsftpd
+              enabled: yes
+              state: started
+
         - name: Create temporary directory for mirror
           file:
-              path: /var/log/artib
+              path: /tmp/osp_repo
               state: directory
               mode: "0755"
 
