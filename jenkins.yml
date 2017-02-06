@@ -260,7 +260,7 @@
           when: repo_already_exists.stat.exists == False
 
         - name: Mirror repository locally
-          shell: "reposync -l -n -p /tmp/osp_repo/ > /dev/null"i
+          shell: "reposync -l -n -p /tmp/osp_repo/ > /dev/null"
           when: repo_already_exists.stat.exists == False
 
         - name: Create repositories from local mirror
