@@ -206,6 +206,10 @@
           shell: "subscription-manager attach --pool={{ rhn_subscription_pool_id }}"
           when: rhn_subscription_pool_id is defined
 
+        - name: Unsubscribe to previous repos
+          shell: "subscription-manager repos --disable=*"
+          when: rhn_repos|length > 0
+
         - name: Subscribe to the list of desired repos
           shell: "subscription-manager repos --enable {{ item }}"
           with_items: "{{ rhn_repos }}"
