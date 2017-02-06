@@ -2,7 +2,7 @@ ADDRESS=$1
 REPONAME=$2
 HOSTNAME=$(hostname -f)
 REPOPATH="/var/ftp/pub/"
-REPOFILE="${REPOPATH}/osp.repo"
+REPOFILE="${REPOPATH}/${REPONAME}/osp.repo"
 
 mkdir -p $REPOPATH
 cp -R "${ADDRESS}/${REPONAME}/" ${REPOPATH}
