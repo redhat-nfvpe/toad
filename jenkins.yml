@@ -195,6 +195,11 @@
       become: true
 
     - block:
+        - name: Unsubscribe previous system
+          redhat_subscription:
+              state: absent
+          ignore_errors: yes
+
         - name: Subscribe for RedHat systems
           redhat_subscription:
               state: present
