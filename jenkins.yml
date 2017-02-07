@@ -84,7 +84,7 @@
     - name: Validate SELinux is enabled
       selinux:
         policy: targeted
-        state: enforcing
+        state: permissive
       when: ansible_connection != 'docker'
 
     - name: SELinux -- Enable httpd_can_network_connect
