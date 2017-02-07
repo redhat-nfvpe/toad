@@ -306,6 +306,10 @@ during your Ansible run).
 For OSP deployments, the build slaves need to be registered under RHN, and
 repositories and guest images need to be synced locally. In order to enable
 repository sync, you need to set the ``slave_mirror_sync`` var to ``true``.
+Please note that by default, the system relies on the slave hostname and public IP
+to generate a valid repository address. Please ensure that slave hostname is
+set properly, and that is resolving to a public ip, reachable by all the VMs or
+baremetal servers involved in the deployments.
 
 [cira_workflow]: https://github.com/redhat-nfvpe/ansible-cira/blob/master/CIRA_Workflow.png
 
