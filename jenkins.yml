@@ -278,7 +278,6 @@
 
         - name: Execute repository creation script
           script: "./scripts/create_repo.sh /tmp osp_repo"
-          when: repo_already_exists.stat.exists == True
 
       become: true
       when: ansible_os_family == "RedHat" and slave_mirror_sync|bool == true
