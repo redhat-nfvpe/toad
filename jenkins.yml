@@ -200,6 +200,9 @@
               state: absent
           ignore_errors: yes
 
+        - name: Cleanup previous systems
+          shell: "subscription-manager remove --all"
+
         - name: Subscribe for RedHat systems
           redhat_subscription:
               state: present
