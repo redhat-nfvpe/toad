@@ -1,6 +1,6 @@
 FROM centos:centos7
 
-LABEL Name="CIRA" \
+LABEL Name="TOAD" \
       Version="{placeholder}"
 
 RUN yum update -y && yum install -y sudo iproute epel-release && \

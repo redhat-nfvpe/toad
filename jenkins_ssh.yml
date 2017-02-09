@@ -9,7 +9,7 @@
 
   vars_files:
     - "{{ inventory_dir  }}/{{ vars_files_relative }}/vars/main.yml"
-    - ~/.ansible/vars/cira_vars.yml
+    - ~/.ansible/vars/toad_vars.yml
 
   tasks:
     - name: Create Jenkins user .ssh directory
@@ -70,7 +70,7 @@
 
   vars_files:
     - "{{ inventory_dir  }}/{{ vars_files_relative }}/vars/main.yml"
-    - ~/.ansible/vars/cira_vars.yml
+    - ~/.ansible/vars/toad_vars.yml
 
   tasks:
     # Deal with SSH key setup for the slave
@@ -123,7 +123,7 @@
     - jenkins_ssh
 
   vars_files:
-    - ~/.ansible/vars/cira_vars.yml
+    - ~/.ansible/vars/toad_vars.yml
 
   tasks:
     - name: Set fact containing the slave SSH fingerprint

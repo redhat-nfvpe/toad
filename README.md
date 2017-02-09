@@ -13,7 +13,7 @@ TOAD is used as a simple spin-up environment to bootstrap a testing
 infrastructure with the ability to run tests with TripleO Quickstart, and parse
 logs and write data into an ELK stack for data visualization.
 
-Find below an image of how the general workflow happens within CIRA:
+Find below an image of how the general workflow happens within TOAD:
 
 ![TOAD Workflow][toad_workflow]
 
@@ -42,8 +42,8 @@ available at https://github.com/vagrant-libvirt/vagrant-libvirt
 
 ## Docker
 
-In addition to support OpenStack and Vagrant deployments, ansible-cira also
-utilize Docker containers. In order to use Docker, you need to install
+In addition to support OpenStack and Vagrant deployments, toad also
+utilizes Docker containers. In order to use Docker, you need to install
 [docker-compose](https://docs.docker.com/compose/).
 
 At present, we tested using docker-compose 1.7.1, build 6c289830.
@@ -184,7 +184,7 @@ as the following (be sure to add `ansible_connection=ssh` as well).
     slave_remoteFS=/home/stack
     slave_port=22
     slave_credentialsId=stack-credential
-    slave_label=cira
+    slave_label=toad
 
 ### Running containers and start provisioning
 Then, you can run the following commands to setup containers and to setup the TOAD environment.
@@ -298,7 +298,7 @@ with the following template:
     slave_remoteFS=/home/stack
     slave_port=22
     slave_credentialsId=stack-credential
-    slave_label=cira
+    slave_label=toad
 
 Add additional fields if necessary. It is assumed that the `ansible` user has
 been previously created, and that you can login either via SSH keys, or provide

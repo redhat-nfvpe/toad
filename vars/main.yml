@@ -34,7 +34,7 @@ jenkins_job_builder_file_jobs_src: "./files/jenkins-jobs"
 jenkins_job_builder_handler_check_retries: 10
 jenkins_job_builder_job_files:
   - "{{ jenkins_job_builder_file_jobs_src  }}/globals/"
-  - "{{ jenkins_job_builder_file_jobs_src  }}/project-cira.yaml"
+  - "{{ jenkins_job_builder_file_jobs_src  }}/project-toad.yaml"
 
 jenkins_job_config_git_src: "https://github.com/redhat-nfvpe/job-configs.git"
 jenkins_job_config_file_src: "./files/job-configs/"
