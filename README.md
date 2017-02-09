@@ -314,6 +314,6 @@ to generate a valid repository address. Please ensure that slave hostname is
 set properly, and that is resolving to a public ip, reachable by all the VMs or
 baremetal servers involved in the deployments.
 
-[toad_workflow]: https://github.com/redhat-nfvpe/toad/blob/master/TOAD_Workflow.png
+[toad_workflow]: https://raw.githubusercontent.com/redhat-nfvpe/toad/master/TOAD_Workflow.png
 
 [//]: # (vim: set filetype=markdown:expandtab)
