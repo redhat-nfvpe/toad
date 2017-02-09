@@ -198,10 +198,10 @@
         - name: Unsubscribe previous system
           redhat_subscription:
               state: absent
-          ignore_errors: yes
+          ignore_errors: true
 
         - name: Cleanup previous systems
-          shell: "subscription-manager remove --all"
+          command: "subscription-manager remove --all"
 
         - name: Subscribe for RedHat systems
           redhat_subscription:
@@ -211,15 +211,15 @@
               pool: "{{ rhn_subscription_pool_id }}"
 
         - name: Attach to the desired pool
-          shell: "subscription-manager attach --pool={{ rhn_subscription_pool_id }}"
+          command: "subscription-manager attach --pool={{ rhn_subscription_pool_id }}"
           when: rhn_subscription_pool_id is defined
 
         - name: Unsubscribe to previous repos
-          shell: "subscription-manager repos --disable=*"
+          command: "subscription-manager repos --disable=*"
           when: rhn_repos|length > 0
 
         - name: Subscribe to the list of desired repos
-          shell: "subscription-manager repos --enable {{ item }}"
+          command: "subscription-manager repos --enable {{ item }}"
           with_items: "{{ rhn_repos }}"
           when: rhn_repos|length > 0
       become: true
@@ -248,11 +248,11 @@
           register: iptables_service_status
 
         - name: Open firewall port for input ftp (iptables)
-          shell: "iptables -A INPUT  -p tcp -m tcp --dport 21 -m conntrack --ctstate ESTABLISHED,NEW -j ACCEPT -m comment --comment 'Allow ftp connections to port 21'"
+          command: "iptables -A INPUT  -p tcp -m tcp --dport 21 -m conntrack --ctstate ESTABLISHED,NEW -j ACCEPT -m comment --comment 'Allow ftp connections to port 21'"
           when: iptables_service_status.stdout == 'active'
 
         - name: Open firewall port for output ftp (iptables)
-          shell: "iptables -A INPUT  -p tcp -m tcp --dport 21 -m conntrack --ctstate ESTABLISHED,NEW -j ACCEPT -m comment --comment 'Allow ftp connections from port 21'"
+          command: "iptables -A INPUT  -p tcp -m tcp --dport 21 -m conntrack --ctstate ESTABLISHED,NEW -j ACCEPT -m comment --comment 'Allow ftp connections from port 21'"
           when: iptables_service_status.stdout == 'active'
 
         - name: Open firewall port for ftp (firewall)
