@@ -11,7 +11,7 @@
 
   vars_files:
     - "{{ inventory_dir  }}/{{ vars_files_relative }}/vars/main.yml"
-    - ~/.ansible/vars/cira_vars.yml
+    - ~/.ansible/vars/toad_vars.yml
 
   pre_tasks:
     - name: Validate Git is installed

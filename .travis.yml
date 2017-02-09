@@ -5,7 +5,7 @@ before_install:
     - sudo apt-get update -qq
     - sudo apt-get install -qq python-apt
     - mkdir -p ~/.ansible/vars
-    - touch ~/.ansible/vars/cira_vars.yml
+    - touch ~/.ansible/vars/toad_vars.yml
     - sudo docker pull projectatomic/dockerfile-lint
 install:
     - pip install ansible

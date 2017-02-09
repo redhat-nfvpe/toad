@@ -10,7 +10,7 @@
 
   vars_files:
     - "{{ inventory_dir }}/{{ vars_files_relative }}/vars/main.yml"
-    - ~/.ansible/vars/cira_vars.yml
+    - ~/.ansible/vars/toad_vars.yml
 
   roles:
     - { role: 'franklinkim.sudo' }
@@ -151,7 +151,7 @@
 
   vars_files:
     - "{{ inventory_dir  }}/{{ vars_files_relative }}/vars/main.yml"
-    - ~/.ansible/vars/cira_vars.yml
+    - ~/.ansible/vars/toad_vars.yml
 
   vars:
     sudo_defaults:
@@ -302,7 +302,7 @@
     - jenkins_slave
 
   vars_files:
-    - ~/.ansible/vars/cira_vars.yml
+    - ~/.ansible/vars/toad_vars.yml
 
   tasks:
     - name: Check if our node already exists

@@ -8,7 +8,7 @@ scenarios:
  2. undercloud is virtualized and overcloud is deployed on baremetal
 
 # Case 2: virtualized undercloud, baremetal in overcloud
-The use case that is currently supported on **ansible-cira** is to have a
+The use case that is currently supported on **toad** is to have a
 virtualized undercloud, and a baremetal overcloud.
 
 **Requirements**
@@ -39,7 +39,7 @@ dependencies:
 
 # Configuration
 
-CIRA relies on a config repo, that stores all private info for jobs to run. You
+TOAD relies on a config repo, that stores all private info for jobs to run. You
 can specify that repo using the `jenkins_job_config_git_src` parameter. You
 can see a sample of job config repo at
 https://github.com/redhat-nfvpe/job-configs/.
