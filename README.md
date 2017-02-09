@@ -1,22 +1,25 @@
-# ansible-cira
+# toad
 
-[![Build Status](https://travis-ci.org/redhat-nfvpe/ansible-cira.svg?branch=master)](https://travis-ci.org/redhat-nfvpe/ansible-cira)
+[![Build Status](https://travis-ci.org/redhat-nfvpe/toad.svg?branch=master)](https://travis-ci.org/redhat-nfvpe/toad)
 
-Deploy a continuous integration reference architecture with Jenkins to test
-OpenStack with [TripleO
+TOAD (TripleO Automated Deployer) is a system that helps automate various
+OpenStack deployment scenarios using [TripleO
 Quickstart](https://github.com/openstack/tripleo-quickstart).
 
-CIRA is used as a simple spin-up environment to bootstrap a testing
+In conjunction with Jenkins Job Builder and Jenkins, various scenarios and 
+topologies can be scripted and then triggered via the Jenkins dashboard.
+
+TOAD is used as a simple spin-up environment to bootstrap a testing
 infrastructure with the ability to run tests with TripleO Quickstart, and parse
 logs and write data into an ELK stack for data visualization.
 
 Find below an image of how the general workflow happens within CIRA:
 
-![CIRA Workflow][cira_workflow]
+![TOAD Workflow][toad_workflow]
 
 # Requirements
 
-There are multiple ways to install CIRA. You deploy locally into a development
+There are multiple ways to install TOAD. You deploy locally into a development
 environment using Vagrant; you can deploy locally into a Docker container
 or you can deploy to an OpenStack instance. Below you will find the list of 
 requirements for each of the deployment scenarios.
@@ -70,9 +73,9 @@ that directory (adjust to your own cloud connection):
 # Overrides / Private Info
 
 There may be some variables you don't want to expose into a Git repo. You can
-store those in the `~/.ansible/vars/cira_vars.yml` file.
+store those in the `~/.ansible/vars/toad_vars.yml` file.
 
-> **NOTE**: You *must* create a `~/.ansible/vars/cira_vars.yml` file, even if
+> **NOTE**: You *must* create a `~/.ansible/vars/toad_vars.yml` file, even if
 > it is blank. This file is loaded via `var_files` directives in Ansible and
 > your deployment will fail if the file doesn't exist.
 
@@ -112,7 +115,7 @@ Jenkins slaves via the `[jenkins_slave]` and `[jenkins_slave:vars]` headers.
 * slave_credentialsId
 * slave_label
 
-On RedHat system, subscription of slaves can be managed automatically
+On a Red Hat system, subscription of slaves can be managed automatically
 if you pass the right credentials:
 * rhn_subscription_username
 * rhn_subscription_password
@@ -130,8 +133,8 @@ be found in the _Access & Security_ section of the Horizon dashboard.
     cloud_flavor: m1.medium
     cloud_key_name: my_pub_key                 # name of your keypair
  
-    jenkins_job_builder_git_jobs_src: gitserver.tld:leifmadsen/nfv-jenkins-jobs.git   # branched from upstream for customization purposes
-    jenkins_job_config_git_src: gitserver.tld:nfvpe/nfv-job-configs.git
+    jenkins_job_builder_git_jobs_src: gitserver.tld:toad/nfv-jenkins-jobs.git   # branched from upstream for customization purposes
+    jenkins_job_config_git_src: gitserver.tld:toad/nfv-job-configs.git
     jenkins_job_builder_config_jenkins_user: admin       # default username
     jenkins_job_builder_config_jenkins_password: admin   # default password
  
@@ -177,14 +180,14 @@ as the following (be sure to add `ansible_connection=ssh` as well).
     slave01 ansible_connection=ssh ansible_host=10.10.1.1 ansible_user=ansible
 
     [jenkins_slave:vars]
-    slave_description=CIRA Testing Node
+    slave_description=TOAD Testing Node
     slave_remoteFS=/home/stack
     slave_port=22
     slave_credentialsId=stack-credential
     slave_label=cira
 
 ### Running containers and start provisioning
-Then, you can run the following commands to setup containers and to setup the CIRA environment.
+Then, you can run the following commands to setup containers and to setup the TOAD environment.
 
     $ docker-compose up -d
     $ ansible-playbook site.yml -vvvv -i hosts/containers \
@@ -217,7 +220,7 @@ security groups, and opened the corresponding ports:
   * `TCP: 80, 443`
 
 > **NOTE**: The security groups are only relevant for OpenStack cloud
-> deployments. There are no firewall rules managed by CIRA within a Vagrant
+> deployments. There are no firewall rules managed by TOAD within a Vagrant
 > deployment.
 
 The base set of four VMs created for the CI components in OpenStack are listed
@@ -257,7 +260,7 @@ Format is the following (see _Example Variable Override File_ for an example):
 
 ### Jenkins Slave Installation
 
-If you wish you automate the deployment of your Jenkins baremetal slave
+If you wish to automate the deployment of your Jenkins baremetal slave
 machine, you can use Kickstart (or other similar methods). A base minimal
 installation of a CentOS node, as booted from a cdrom (we're using CentOS as
 booted from the vFlash partition on a DRAC) can be configured during boot by
@@ -291,7 +294,7 @@ with the following template:
     slave01 ansible_host=10.10.1.1 ansible_user=ansible
  
     [jenkins_slave:vars]
-    slave_description=CIRA Testing Node
+    slave_description=TOAD Testing Node
     slave_remoteFS=/home/stack
     slave_port=22
     slave_credentialsId=stack-credential
@@ -311,6 +314,6 @@ to generate a valid repository address. Please ensure that slave hostname is
 set properly, and that is resolving to a public ip, reachable by all the VMs or
 baremetal servers involved in the deployments.
 
-[cira_workflow]: https://github.com/redhat-nfvpe/ansible-cira/blob/master/CIRA_Workflow.png
+[toad_workflow]: https://github.com/redhat-nfvpe/toad/blob/master/TOAD_Workflow.png
 
 [//]: # (vim: set filetype=markdown:expandtab)
