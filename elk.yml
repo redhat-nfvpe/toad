@@ -46,7 +46,7 @@
 
   post_tasks:
     - name: Ensure libsemanage-python is installed
-      yum:
+      package:
         name: libsemanage-python
         state: present
 

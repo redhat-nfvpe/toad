@@ -50,7 +50,7 @@
       when: deploy_type is defined and deploy_type == 'docker'
 
     - name: Install python-pip
-      yum:
+      package:
         name: python-pip
         state: present
 
@@ -77,7 +77,7 @@
         shell: /bin/bash
 
     - name: Ensure libsemanage-python is installed
-      yum:
+      package:
         name: libsemanage-python
         state: present
 
@@ -162,7 +162,7 @@
 
   pre_tasks:
     - name: Ensure libselinux-python is installed
-      yum:
+      package:
         name: libselinux-python
         state: present
 
@@ -174,7 +174,7 @@
 
   tasks:
     - name: Validate Git is installed
-      yum:
+      package:
         name: git
         state: present
 
@@ -227,8 +227,8 @@
 
     - block:
         - name: Install needed packages for reposync
-          yum:
-              pkg: "{{ item }}"
+          package:
+              name: "{{ item }}"
               state: present
           with_items:
               - createrepo
@@ -240,6 +240,13 @@
               name: vsftpd
               enabled: yes
               state: started
+
+        - name: Install needed packaged for firewalld
+          package:
+              name: "{{ item }}"
+              state: present
+          with_items:
+              - python-firewall
 
         - name: Check if iptables is running
           command: systemctl is-active iptables
@@ -284,7 +291,6 @@
 
         - name: Execute repository creation script
           script: "./scripts/create_repo.sh /tmp osp_repo"
-
       become: true
       when: ansible_os_family == "RedHat" and slave_mirror_sync|bool == true
 
