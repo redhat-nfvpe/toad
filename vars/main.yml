@@ -6,6 +6,7 @@ jenkins_master_server_name: ci.example.tld
 jenkins_master_nginx_access_log: /var/log/nginx/jenkins.access.log
 jenkins_master_ssh_directory: /var/lib/jenkins/.ssh/
 jenkins_master_results_directory: /srv/static/
+jenkins_version: 2.32
 jenkins_repo_url: http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
 jenkins_plugins:
   - build-timeout
@@ -69,7 +70,7 @@ filebeat_deployed: true
 filebeat_user: root
 filebeat_group: root
 filebeat_create_user: false
-filebeat_version: 1.2.3
+filebeat_version: 5.x
 filebeat_start_at_boot: true
 filebeat_config_file: /etc/filebeat/filebeat.yml
 filebeat_config_prospectors: |
