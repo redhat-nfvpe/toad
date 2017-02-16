@@ -11,20 +11,27 @@
 
 # Include the ELK stack playbook
 - include: elk.yml
+  when: elk_deployed
 
 # Include FileBeat setup
 - include: filebeat.yml
+  when: filebeat_deployed
 
 # Section that provides post-installation information
 - hosts: kibana
+  vars_files:
+    - ~/.ansible/vars/toad_vars.yml
+
   tags:
     - kibana
     - elk
 
   post_tasks:
     - name: Where is Kibana located?
+
       debug:
         msg: "Kibana can be reached at http://{{hostvars[inventory_hostname]['ansible_default_ipv4']['address']}}:5601/"
+      when: elk_deployed
 
 - hosts: jenkins_master
   tags:

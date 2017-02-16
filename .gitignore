@@ -7,3 +7,4 @@ inventory
 files/
 !files/filebeat.yml
 .vagrant/
+vagrant/
