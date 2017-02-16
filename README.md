@@ -314,6 +314,28 @@ to generate a valid repository address. Please ensure that slave hostname is
 set properly, and that is resolving to a public ip, reachable by all the VMs or
 baremetal servers involved in the deployments.
 
+## Baremetal deployment
+
+In order to perform baremetal deployments, an additional repository to host the
+hardware environment configuration is needed. A sample repository is provided:
+`https://github.com/redhat-nfvpe/toad_envs`
+
+In order to customize the repositories please use the following settings:
+- jenkins_job_baremetal_env_git_src: path to the repository where to host the environments
+- jenkins_job_baremetal_env_path: if the environment is on a subfolder of the repo,
+please specify the relative path here.
+
+The environment repo needs to have a folder for each environment that wants to be tested.
+Each environment needs to have the following content:
+- deploy_config.yml: it contains extra_args var, that will be the parameters needed
+  to deploy the overcloud. If specifies flavors, nodes to scale and templates to be used.
+- env_settings.yml: TripleO quickstart env settings for the baremetal deployment. It defines
+  the network settings, undercloud config parameters and any specific setting needed.
+- instackenv.json: Data file where all the baremetal nodes are specified. For each node,
+  the IPMI address/user/password is required, as well as the provisioning macs.
+- net_environment.yml: TripleO environment file that will be used. You can specify here all
+  the typical TripleO settings that need to be customized.
+
 [toad_workflow]: https://raw.githubusercontent.com/redhat-nfvpe/toad/master/TOAD_Workflow.png
 
 [//]: # (vim: set filetype=markdown:expandtab)

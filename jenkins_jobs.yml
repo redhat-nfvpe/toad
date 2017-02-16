@@ -80,6 +80,41 @@
         dest: "{{ jenkins_job_config_file_dest }}"
       when: deploy_type is defined and deploy_type == 'docker'
 
+    - name: Locally clone TOAD envs
+      git:
+        repo: "{{ jenkins_job_baremetal_env_git_src }}"
+        dest: "{{ jenkins_job_baremetal_env_file_src }}"
+        version: master
+        force: yes
+        accept_hostkey: yes
+      delegate_to: localhost
+      changed_when: false
+      tags:
+        - clone_jobs
+      become: false
+
+    - name: Create folder to store config
+      file:
+        path: "{{ jenkins_job_baremetal_file_dest }}"
+        state: directory
+        recurse: yes
+        mode: "0755"
+        owner: jenkins
+        group: jenkins
+
+    - name: Synchronize baremetal envs to remote server
+      synchronize:
+        src: "{{ jenkins_job_baremetal_env_file_src }}/{{ jenkins_job_baremetal_env_path }}"
+        dest: "{{ jenkins_job_baremetal_file_dest }}"
+        archive: yes
+      when: deploy_type is not defined or deploy_type != 'docker'
+
+    - name: Synchronize baremetal envs to remote server (docker)
+      copy:
+        src: "{{ jenkins_job_baremetal_env_file_src }}/{{ jenkins_job_baremetal_env_path }}"
+        dest: "{{ jenkins_job_baremetal_file_dest }}"
+      when: deploy_type is defined and deploy_type == 'docker'
+
   roles:
     - { role: 'leifmadsen.jenkins-job-builder' }
 
