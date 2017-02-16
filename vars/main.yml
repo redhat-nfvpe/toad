@@ -45,7 +45,8 @@ jenkins_job_baremetal_env_path: ''  # under certain environments, envs just live
 jenkins_job_baremetal_env_file_src: "./files/toad_envs/"
 jenkins_job_baremetal_file_dest: "/var/lib/jenkins/userContent/toad_envs"
 
-# Jenkins slave default values
+# mirror sync default values
+master_mirror_sync: false
 slave_mirror_sync: false
 
 # Enable ELK stack?
