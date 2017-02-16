@@ -20,6 +20,7 @@
 # Section that provides post-installation information
 - hosts: kibana
   vars_files:
+    - "{{ inventory_dir  }}/{{ vars_files_relative }}/vars/main.yml"
     - ~/.ansible/vars/toad_vars.yml
 
   tags:
