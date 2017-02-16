@@ -1,15 +1,44 @@
-dist: trusty
+---
+env:
+    DOCKER_COMPOSE_VERSION: 1.9.0
+
+sudo: required
 language: python
 python: '2.7'
+
+services:
+    - docker
+
 before_install:
+    # perform updates
     - sudo apt-get update -qq
+    - sudo apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y docker-engine
+
+    # check for docker-compose version
+    - docker-compose --version
+
+    # update to a newer version of docker-compose
+    - sudo rm /usr/local/bin/docker-compose
+    - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+    - chmod +x docker-compose
+    - sudo mv docker-compose /usr/local/bin
+
+    # revalidate version of docker-compose
+    - docker-compose --version
+
+    # install ansible
     - sudo apt-get install -qq python-apt
     - mkdir -p ~/.ansible/vars
     - touch ~/.ansible/vars/toad_vars.yml
     - sudo docker pull projectatomic/dockerfile-lint
+
+    # instantiate our docker nodes
+    - docker-compose up -d
+
 install:
     - pip install ansible
     - pip install ansible-lint
+
 script:
     - ansible-galaxy install -r requirements.yml
     - ansible-playbook --syntax-check elk.yml
@@ -18,3 +47,5 @@ script:
     - ansible-playbook --syntax-check site.yml
     - ansible-lint --exclude=roles site.yml
     - sudo docker run -it --rm --privileged -v `pwd`:/root/ projectatomic/dockerfile-lint dockerfile_lint --permissive -f dockerfiles/*
+    - ansible-galaxy install -r requirements.yml
+    - ansible-playbook site.yml -i hosts/containers -e use_openstack_deploy=false -e deploy_type='docker' --skip-tags jenkins_slave -c docker
