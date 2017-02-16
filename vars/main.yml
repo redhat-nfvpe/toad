@@ -40,6 +40,10 @@ jenkins_job_config_git_src: "https://github.com/redhat-nfvpe/job-configs.git"
 jenkins_job_config_file_src: "./files/job-configs/"
 jenkins_job_config_file_dest: "/var/lib/jenkins/userContent/config"
 
+jenkins_job_baremetal_env_git_src: https://github.com/redhat-nfvpe/toad_envs.git
+jenkins_job_baremetal_env_path: ''  # under certain environments, envs just live on a folder of a more generic repo
+jenkins_job_baremetal_env_file_src: "./files/toad_envs/"
+jenkins_job_baremetal_file_dest: "/var/lib/jenkis/userContent/toad_envs"
 
 # Logstash Configuration
 logstash_configuration_files:
