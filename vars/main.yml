@@ -6,7 +6,8 @@ jenkins_master_server_name: ci.example.tld
 jenkins_master_nginx_access_log: /var/log/nginx/jenkins.access.log
 jenkins_master_ssh_directory: /var/lib/jenkins/.ssh/
 jenkins_master_results_directory: /srv/static/
-jenkins_version: 2.32
+jenkins_pkg_url: http://pkg.jenkins.io/redhat-stable
+jenkins_version: 2.32.2
 jenkins_repo_url: http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
 jenkins_plugins:
   - build-timeout
