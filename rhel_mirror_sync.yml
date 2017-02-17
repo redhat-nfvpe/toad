@@ -45,7 +45,7 @@
 
     - name: Check if repo already exists
       stat: path=/tmp/osp_repo
-      register: repo_already_exist
+      register: repo_already_exists
 
     - name: Create temporary directory for mirror
       file:
