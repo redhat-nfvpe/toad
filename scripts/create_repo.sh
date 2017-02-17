@@ -1,11 +1,9 @@
-ADDRESS=$1
-REPONAME=$2
+REPONAME=$1
 PUBLIC_ADDRESS=$(hostname --ip-address)
 REPOPATH="/var/ftp/pub/"
 REPOFILE="${REPOPATH}/${REPONAME}/osp.repo"
 
 mkdir -p $REPOPATH
-cp -R "${ADDRESS}/${REPONAME}/" ${REPOPATH}
 rm $REPOFILE 2> /dev/null
 touch $REPOFILE
 
