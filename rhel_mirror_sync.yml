@@ -64,5 +64,5 @@
 
     - name: Execute repository creation script
       script: "./scripts/create_repo.sh /tmp osp_repo"
-become: true
+  become: true
 
