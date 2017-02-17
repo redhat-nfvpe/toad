@@ -1,0 +1,39 @@
+- name: fail if no credentials are provided
+  fail:
+      msg: "Please define rhn_subscription_username, rhn_subscription_password and rhn_subscription_pool_id to enroll your system"
+  when: rhn_subscription_username is undefined or rhn_subscription_username|bool == false or
+        rhn_subscription_password is undefined or rhn_subscription_password|bool == false or
+        rhn_subscription_pool_id is undefine or rhn_subscription_password|bool == false
+
+- name: Unsubscribe previous system
+  redhat_subscription:
+      state: absent
+      ignore_errors: true
+  become: true
+
+- name: Cleanup previous systems
+  command: "subscription-manager remove --all"
+  become: true
+
+- name: Subscribe for RedHat systems
+  redhat_subscription:
+      state: present
+      username: "{{ rhn_subscription_username }}"
+      password: "{{ rhn_subscription_password }}"
+      pool: "{{ rhn_subscription_pool_id }}"
+  become: true
+
+- name: Attach to the desired pool
+  command: "subscription-manager attach --pool={{ rhn_subscription_pool_id }}"
+  become: true
+
+- name: Unsubscribe to previous repos
+  command: "subscription-manager repos --disable=*"
+  when: rhn_repos|length > 0
+  become: true
+
+- name: Subscribe to the list of desired repos
+  command: "subscription-manager repos --enable {{ item }}"
+  with_items: "{{ rhn_repos }}"
+  when: rhn_repos|length > 0
+  become: true

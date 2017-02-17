@@ -138,6 +138,9 @@
         group: jenkins
         mode: "0755"
 
+    - include: rhel_register.yml
+      when: ansible_os_family == "RedHat" and master_subscribe_rhn|bool == True
+
     - include: rhel_mirror_sync.yml
       when: ansible_os_family == "RedHat" and master_mirror_sync|bool == true
 
@@ -198,36 +201,8 @@
           mode: "0755"
       become: true
 
-    - block:
-        - name: Unsubscribe previous system
-          redhat_subscription:
-              state: absent
-          ignore_errors: true
-
-        - name: Cleanup previous systems
-          command: "subscription-manager remove --all"
-
-        - name: Subscribe for RedHat systems
-          redhat_subscription:
-              state: present
-              username: "{{ rhn_subscription_username }}"
-              password: "{{ rhn_subscription_password }}"
-              pool: "{{ rhn_subscription_pool_id }}"
-
-        - name: Attach to the desired pool
-          command: "subscription-manager attach --pool={{ rhn_subscription_pool_id }}"
-          when: rhn_subscription_pool_id is defined
-
-        - name: Unsubscribe to previous repos
-          command: "subscription-manager repos --disable=*"
-          when: rhn_repos|length > 0
-
-        - name: Subscribe to the list of desired repos
-          command: "subscription-manager repos --enable {{ item }}"
-          with_items: "{{ rhn_repos }}"
-          when: rhn_repos|length > 0
-      become: true
-      when: ansible_os_family == "RedHat" and rhn_subscription_username is defined and rhn_subscription_password is defined
+    - include: rhel_register.yml
+      when: ansible_os_family == "RedHat" and slave_subscribe_rhn|bool == True
 
     - include: rhel_mirror_sync.yml
       when: ansible_os_family == "RedHat" and slave_mirror_sync|bool == true

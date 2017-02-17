@@ -115,12 +115,6 @@ Jenkins slaves via the `[jenkins_slave]` and `[jenkins_slave:vars]` headers.
 * slave_credentialsId
 * slave_label
 
-On a Red Hat system, subscription of slaves can be managed automatically
-if you pass the right credentials:
-* rhn_subscription_username
-* rhn_subscription_password
-* rhn_subscription_pool_id
-
 ## Example Override Variable File
 Many of the values can be found in your OpenStack RC file, which can typically
 be found in the _Access & Security_ section of the Horizon dashboard.
@@ -360,6 +354,19 @@ Each environment needs to have the following content:
   the IPMI address/user/password is required, as well as the provisioning macs.
 - net_environment.yml: TripleO environment file that will be used. You can specify here all
   the typical TripleO settings that need to be customized.
+
+## RHN subscription
+
+On a Red Hat system, subscription of slaves can be managed automatically
+if you pass the right credentials:
+* rhn_subscription_username
+* rhn_subscription_password
+* rhn_subscription_pool_id
+
+Subscription can be managed automatically either on master or slaves, with the
+flags:
+* master_subscribe_rhn
+* slave_subscribe_rhn
 
 [toad_workflow]: https://raw.githubusercontent.com/redhat-nfvpe/toad/master/TOAD_Workflow.png
 

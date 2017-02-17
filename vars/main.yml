@@ -101,6 +101,9 @@ filebeat_config_logging: |
       name: mybeat.log
       keepfiles: 7
 
+# RHN subscription
+master_subscribe_rhn: false
+slave_subscribe_rhn: false
 rhn_repos:
   - rhel-7-server-rpms
   - rhel-7-server-extras-rpms
