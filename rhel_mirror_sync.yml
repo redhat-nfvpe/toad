@@ -1,0 +1,68 @@
+- block:
+    - name: Install needed packages for reposync
+      package:
+          name: "{{ item }}"
+          state: present
+      with_items:
+          - createrepo
+          - vsftpd
+          - yum-utils
+
+    - name: Enable vsftpd service
+      service:
+          name: vsftpd
+          enabled: yes
+          state: started
+
+    - name: Install needed packaged for firewalld
+      package:
+          name: "{{ item }}"
+          state: present
+      with_items:
+          - python-firewall
+
+    - name: Check if iptables is running
+      command: systemctl is-active iptables
+      ignore_errors: yes
+      changed_when: false
+      register: iptables_service_status
+
+    - name: Open firewall port for input ftp (iptables)
+      command: "iptables -A INPUT  -p tcp -m tcp --dport 21 -m conntrack --ctstate ESTABLISHED,NEW -j ACCEPT -m comment --comment 'Allow ftp connections to port 21'"
+      when: iptables_service_status.stdout == 'active'
+
+    - name: Open firewall port for output ftp (iptables)
+      command: "iptables -A INPUT  -p tcp -m tcp --dport 21 -m conntrack --ctstate ESTABLISHED,NEW -j ACCEPT -m comment --comment 'Allow ftp connections from port 21'"
+      when: iptables_service_status.stdout == 'active'
+
+    - name: Open firewall port for ftp (firewall)
+      firewalld:
+          service: ftp
+          permanent: true
+          state: enabled
+          immediate: true
+      when: iptables_service_status.stdout != 'active'
+
+    - name: Check if repo already exists
+      stat: path=/tmp/osp_repo
+      register: repo_already_exists
+
+    - name: Create temporary directory for mirror
+      file:
+          path: /tmp/osp_repo
+          state: directory
+          mode: "0755"
+      when: repo_already_exists.stat.exists == False
+
+    - name: Mirror repository locally
+      shell: "reposync -l -n -p /tmp/osp_repo/ > /dev/null"
+      when: repo_already_exists.stat.exists == False
+
+    - name: Create repositories from local mirror
+      shell: "for DIR in `find /tmp/osp_repo  -maxdepth 1 -mindepth 1 -type d`; do createrepo $DIR; done; > /dev/null"
+      when: repo_already_exists.stat.exists == False
+
+    - name: Execute repository creation script
+      script: "./scripts/create_repo.sh /tmp osp_repo"
+  become: true
+
