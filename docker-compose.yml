@@ -7,45 +7,29 @@ services:
       context: ./dockerfiles 
       dockerfile: centos7_base
     container_name: jenkins_master
-    security_opt:
-      - seccomp:unconfined
-    volumes:
-      - /run
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
     entrypoint: /sbin/init
+    privileged: true
 
   logstash:
     build: 
       context: ./dockerfiles 
       dockerfile: centos7_base
     container_name: logstash
-    security_opt:
-      - seccomp:unconfined
-    volumes:
-      - /run
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
     entrypoint: /sbin/init
+    privileged: true
 
   elasticsearch:
     build: 
       context: ./dockerfiles 
       dockerfile: centos7_base
     container_name: elasticsearch
-    security_opt:
-      - seccomp:unconfined
-    volumes:
-      - /run
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
     entrypoint: /sbin/init
+    privileged: true
 
   kibana:
     build: 
       context: ./dockerfiles 
       dockerfile: centos7_base
     container_name: kibana
-    security_opt:
-      - seccomp:unconfined
-    volumes:
-      - /run
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
     entrypoint: /sbin/init
+    privileged: true
