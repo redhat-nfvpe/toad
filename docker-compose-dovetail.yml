@@ -14,6 +14,8 @@ services:
       - /run
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     entrypoint: /sbin/init
+    ports:
+      - "8080:8080"
 
   logstash:
     build: 
@@ -26,6 +28,8 @@ services:
       - /run
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     entrypoint: /sbin/init
+    ports:
+      - "5044:5044"
 
   elasticsearch:
     build: 
@@ -38,6 +42,8 @@ services:
       - /run
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     entrypoint: /sbin/init
+    ports:
+      - "9200:9200"
 
   kibana:
     build: 
@@ -61,3 +67,6 @@ services:
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     entrypoint: /sbin/init
+    ports:
+      - "443:443"
+      - "5601:5601"
