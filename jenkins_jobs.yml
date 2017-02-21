@@ -155,6 +155,7 @@
       with_items: "{{ jenkins_job_builder_file_jobs_src }}"
       notify:
         - Check jenkins
+        - Reload jenkins-jobs
 
     - name: Results of JJB reload
       debug:
