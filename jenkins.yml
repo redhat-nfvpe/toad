@@ -163,6 +163,8 @@
     sudo_users:
       - name: 'stack'
         nopasswd: yes
+      - name: 'ansible'
+        nopasswd: yes
 
   pre_tasks:
     - name: Ensure libselinux-python is installed
