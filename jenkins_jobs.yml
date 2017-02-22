@@ -58,6 +58,14 @@
         - clone_jobs
       become: false
 
+    - name: Change all tasks to jenkins slave (docker)
+      replace:
+        dest: "{{ jenkins_job_builder_file_jobs_src }}/project-toad.yaml"
+        regexp: "partner: master"
+        replace: "partner: toad"
+      delegate_to: localhost
+      when: deploy_type is defined and deploy_type == 'docker'
+
     - name: Create folder to store config
       file:
         path: "{{ jenkins_job_config_file_dest }}"
