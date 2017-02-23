@@ -29,6 +29,15 @@
     - { role: 'geerlingguy.java' }
     - { role: 'leifmadsen.logstash' }
 
+  post_tasks:
+    - name: Add JAVA_HOME in /etc/default/logstash
+      lineinfile:
+        dest=/etc/default/logstash
+        line='export JAVA_HOME=/usr/lib/jvm/jre'
+        create=yes
+      when: deploy_type is defined and deploy_type == 'docker'
+      notify: restart logstash
+
 - hosts: kibana
   become: true
   tags:
