@@ -12,6 +12,10 @@ services:
     volumes:
       - /run
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - ./:/opt/toad
+      - ./container_data/jenkins/data:/var/lib/jenkins/userContent
+      - ./container_data/jenkins/log:/var/log/jenkins
+      - ./container_data/jenkins/jobs:/etc/jenkins_jobs
     entrypoint: /sbin/init
     ports:
       - "8080:8080"
@@ -26,6 +30,9 @@ services:
     volumes:
       - /run
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - ./:/opt/toad
+      - ./container_data/logstash/config:/etc/logstash/conf.d
+      - ./container_data/logstash/log:/var/log/logstash/logstash.log
     entrypoint: /sbin/init
     ports:
       - "5044:5044"
@@ -40,6 +47,10 @@ services:
     volumes:
       - /run
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - ./:/opt/toad
+      - ./container_data/elasticsearch/log:/var/log/elasticsearch
+      - ./container_data/elasticsearch/data:/var/lib/elasticsearch
+      - ./container_data/elasticsearch/config:/etc/elasticsearch
     entrypoint: /sbin/init
     ports:
       - "9200:9200"
@@ -54,6 +65,8 @@ services:
     volumes:
       - /run
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - ./:/opt/toad
+      - ./container_data/kibana/config:/opt/kibana/config
     entrypoint: /sbin/init
     ports:
       - "443:443"

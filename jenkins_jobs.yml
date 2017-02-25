@@ -83,9 +83,7 @@
       when: deploy_type is not defined or deploy_type != 'docker'
 
     - name: Synchronize job config to remote server (docker)
-      copy:
-        src: "{{ jenkins_job_config_file_src }}"
-        dest: "{{ jenkins_job_config_file_dest }}"
+      command: rsync -r "/opt/toad/{{ jenkins_job_config_file_src }}" "{{ jenkins_job_config_file_dest }}"
       when: deploy_type is defined and deploy_type == 'docker'
 
     - name: Locally clone TOAD envs
@@ -118,9 +116,7 @@
       when: deploy_type is not defined or deploy_type != 'docker'
 
     - name: Synchronize baremetal envs to remote server (docker)
-      copy:
-        src: "{{ jenkins_job_baremetal_env_file_src }}/{{ jenkins_job_baremetal_env_path }}"
-        dest: "{{ jenkins_job_baremetal_file_dest }}"
+      command: rsync -r "/opt/toad/{{ jenkins_job_baremetal_env_file_src }}" "{{ jenkins_job_baremetal_file_dest }}"
       when: deploy_type is defined and deploy_type == 'docker'
 
   roles:
@@ -155,12 +151,10 @@
     - name: Synchronize JJB config to remote server (docker)
       become: true
       become_user: jenkins
-      copy:
-        dest: "{{ jenkins_job_builder_file_jobs_dest }}"
-        src: "{{ item }}"
+      command: rsync -r "{{ item }}" "{{ jenkins_job_builder_file_jobs_dest }}"
       when: jenkins_job_builder_file_jobs_src != "" and
             (deploy_type is defined and deploy_type == 'docker')
-      with_items: "{{ jenkins_job_builder_file_jobs_src }}"
+      with_items: "/opt/toad/{{ jenkins_job_builder_file_jobs_src }}"
       notify:
         - Check jenkins
         - Reload jenkins-jobs

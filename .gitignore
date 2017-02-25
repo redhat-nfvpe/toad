@@ -8,3 +8,4 @@ files/
 !files/filebeat.yml
 .vagrant/
 vagrant/
+container_data/
