@@ -23,10 +23,12 @@
       password: "{{ rhn_subscription_password }}"
       pool: "{{ rhn_subscription_pool_id }}"
   become: true
+  changed_when: false
 
 - name: Attach to the desired pool
   command: "subscription-manager attach --pool={{ rhn_subscription_pool_id }}"
   become: true
+  changed_when: false
 
 - name: Unsubscribe to previous repos
   command: "subscription-manager repos --disable=*"
