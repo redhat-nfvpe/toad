@@ -13,6 +13,7 @@
 
 - name: Cleanup previous systems
   command: "subscription-manager remove --all"
+  changed_when: false
   become: true
 
 - name: Subscribe for RedHat systems
