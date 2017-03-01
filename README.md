@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/redhat-nfvpe/toad.svg?branch=master)](https://travis-ci.org/redhat-nfvpe/toad)
 
+![toad_logo][toad_logo]
+
 TOAD (TripleO Automated Deployer) is a system that helps automate various
 OpenStack deployment scenarios using [TripleO
 Quickstart](https://github.com/openstack/tripleo-quickstart).
@@ -371,3 +373,4 @@ flags:
 [toad_workflow]: https://raw.githubusercontent.com/redhat-nfvpe/toad/master/TOAD_Workflow.png
 
 [//]: # (vim: set filetype=markdown:expandtab)
+[toad_logo]: docs/logo/toad_logo.png
