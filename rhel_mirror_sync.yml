@@ -27,6 +27,12 @@
       changed_when: false
       register: iptables_service_status
 
+    - name: Check if firewalld is running
+      command: systemctl is-active firewalld
+      ignore_errors: yes
+      changed_when: false
+      register: firewalld_service_status
+
     - name: Open firewall port for input ftp (iptables)
       command: "iptables -A INPUT  -p tcp -m tcp --dport 21 -m conntrack --ctstate ESTABLISHED,NEW -j ACCEPT -m comment --comment 'Allow ftp connections to port 21'"
       when: iptables_service_status.stdout == 'active'
@@ -41,7 +47,7 @@
           permanent: true
           state: enabled
           immediate: true
-      when: iptables_service_status.stdout != 'active'
+      when: firewalld_service_status.stdout == 'active'
 
     - name: Check if repo already exists
       stat: path=/var/ftp/pub/osp_repo
