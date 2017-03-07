@@ -40,7 +40,8 @@ if [ "$ID" = "centos" ]; then
 fi
 
 # install pre-requisites
-$pm install --best --allow-erasing vim-enhanced git ntp ansible -y
+$pm makecache --refresh
+$pm install git ntp ansible -y
 
 # run updates after installation of packages to avoid conflicts
 $pm check-update
