@@ -25,7 +25,7 @@ If you're on a Fedora 25 (or later) or CentOS 7.3 system, and you're ok with
 running a bash script as root, you can bootstrap your system with the following
 command:
 
-    curl https://github.com/redhat-nfvpe/toad/blob/master/scripts/bootstrap.sh -L -o - | sh
+    curl http://bit.ly/toad-bootstrap -L -o - | sh
 
 # Requirements
 
