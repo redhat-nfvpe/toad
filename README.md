@@ -19,6 +19,14 @@ Find below an image of how the general workflow happens within TOAD:
 
 ![TOAD Workflow][toad_workflow]
 
+# Quickstart
+
+If you're on a Fedora 25 (or later) or CentOS 7.3 system, and you're ok with
+running a bash script as root, you can bootstrap your system with the following
+command:
+
+    curl https://github.com/redhat-nfvpe/toad/blob/master/scripts/bootstrap.sh -L -o - | sh
+
 # Requirements
 
 There are multiple ways to install TOAD. You deploy locally into a development
