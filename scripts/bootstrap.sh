@@ -35,6 +35,14 @@ fi
 
 msg "Checking for system updates and installing dependencies."
 # install packages
+if [ "$ID" = "centos" ]; then
+    $pm install epel-release -y
+fi
+
+# install pre-requisites
+$pm install vim-enhanced git ntp ansible -y
+
+# run updates after installation of packages to avoid conflicts
 $pm check-update
 
 updates_applied=0
@@ -42,13 +50,6 @@ if [ $? -ne 0 ]; then
     $pm update -y
     updates_applied=1
 fi
-
-if [ "$ID" = "centos" ]; then
-    $pm install epel-release -y
-fi
-
-# install pre-requisites
-$pm install vim-enhanced git ntp ansible -y
 
 msg "Enabling required services."
 
