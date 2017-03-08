@@ -26,7 +26,7 @@ if [ "$ID" != "fedora" ] && [ "$ID" != "centos" ]; then
 fi
 
 # setup our package manager
-if [ "$ID" = "fedora" ] && [ $VERSION_ID > 22 ]; then
+if [ "$ID" = "fedora" ] && [ $VERSION_ID -gt 22 ]; then
     pm="dnf"
 
 else
@@ -41,14 +41,14 @@ fi
 
 # install pre-requisites
 $pm makecache --refresh
-$pm install git ntp ansible -y
+$pm install git ntp ansible libselinux-python -y
 
 # run updates after installation of packages to avoid conflicts
 updates_applied=0
 $pm check-update
 
 if [ $? -ne 0 ]; then
-    msg "Updates are required. Applying."
+    msg "Updates are required. Applying. Please be patient."
     $pm update -y
     updates_applied=1
 fi
@@ -59,24 +59,27 @@ msg "Enabling required services."
 systemctl set-default multi-user.target
 
 # enable SSH service
+msg "-- install and enable SSH server"
 systemctl enable sshd.service
 systemctl start sshd.service
 
 # update time and enable ntp
+msg "-- update time via NTP and start daemon; enable and start service"
 ntpdate pool.ntp.org
 systemctl enable ntpd.service
 systemctl start ntpd.service
 
 # install docker
+msg "-- install and enable Docker server, client, and compose"
 $pm install docker docker-client docker-compose -y
+groupadd docker     # add docker group so we can add toad user to it
 systemctl enable docker-containerd.service
 systemctl enable docker.service
 systemctl start docker-containerd.service
 systemctl start docker.service
 
-msg "Creating and setting up system user TOAD will run as."
-
 # create toad user
+msg "Creating and setting up system user TOAD will run as."
 id toad > /dev/null 2&>1
 if [ $? -ne 0 ]; then
     adduser toad
@@ -85,17 +88,12 @@ if [ $? -ne 0 ]; then
     cat > /etc/sudoers.d/toad <<EOF
 toad        ALL=(ALL)       NOPASSWD:ALL
 EOF
-fi
 
-cat /home/toad/.bashrc | grep -xqFe 'alias docker="sudo /usr/bin/docker"'
-if [ $? -ne 0 ]; then
-    cat >> /home/toad/.bashrc <<EOF
-alias docker="sudo /usr/bin/docker"
-alias docker-compose="sudo /usr/bin/docker-compose"
-EOF
+    usermod -aG docker toad     # add toad to the docker group
 fi
 
 # clone TOAD as the toad user
+msg "Getting TOAD from upstream."
 su - toad
 cd $HOME
 if [ ! -d toad ]; then
@@ -112,4 +110,4 @@ if [ $updates_applied -ne 0 ]; then
 fi
 
 msg "=== TOAD bootstrap is completed!"
-msg "    Now run 'cd toad ; docker-compose up -d' as the toad user."
+msg "    Additional setup still required. Please see: https://github.com/redhat-nfvpe/toad#base-deployment-docker"
