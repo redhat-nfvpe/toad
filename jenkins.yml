@@ -170,10 +170,11 @@
         nopasswd: yes
 
   pre_tasks:
-    - name: Ensure libselinux-python is installed
-      package:
-        name: libselinux-python
-        state: present
+    - name: Ensure libselinux-python is installed (local)
+      local_action:
+        package:
+          name: libselinux-python
+          state: present
 
     - name: Create stack user
       user:
