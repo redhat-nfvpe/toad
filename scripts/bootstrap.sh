@@ -26,7 +26,7 @@ if [ "$ID" != "fedora" ] && [ "$ID" != "centos" ]; then
 fi
 
 # setup our package manager
-if [ "$ID" = "fedora" ] && [ $VERSION_ID > 22 ]; then
+if [ "$ID" = "fedora" ] && [ $VERSION_ID -gt 22 ]; then
     pm="dnf"
 
 else
@@ -41,7 +41,7 @@ fi
 
 # install pre-requisites
 $pm makecache --refresh
-$pm install git ntp ansible -y
+$pm install git ntp ansible libselinux-python -y
 
 # run updates after installation of packages to avoid conflicts
 updates_applied=0
