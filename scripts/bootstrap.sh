@@ -35,20 +35,23 @@ fi
 
 msg "Checking for system updates and installing dependencies."
 # install packages
-$pm check-update
-
-updates_applied=0
-if [ $? -ne 0 ]; then
-    $pm update -y
-    updates_applied=1
-fi
-
 if [ "$ID" = "centos" ]; then
     $pm install epel-release -y
 fi
 
 # install pre-requisites
-$pm install vim-enhanced git ntp ansible -y
+$pm makecache --refresh
+$pm install git ntp ansible -y
+
+# run updates after installation of packages to avoid conflicts
+updates_applied=0
+$pm check-update
+
+if [ $? -ne 0 ]; then
+    msg "Updates are required. Applying."
+    $pm update -y
+    updates_applied=1
+fi
 
 msg "Enabling required services."
 
@@ -74,8 +77,8 @@ systemctl start docker.service
 msg "Creating and setting up system user TOAD will run as."
 
 # create toad user
-getent passwd toad > /dev/null 2&>1
-if [ $? -eq 0 ]; then
+id toad > /dev/null 2&>1
+if [ $? -ne 0 ]; then
     adduser toad
 
     # permissions for sudo
