@@ -8,6 +8,8 @@ services:
       context: ./dockerfiles 
       dockerfile: centos7_base
     container_name: jenkins_master
+    entrypoint: /sbin/init
+    privileged: true
     security_opt:
       - seccomp:unconfined
     volumes:
@@ -26,6 +28,8 @@ services:
       context: ./dockerfiles 
       dockerfile: centos7_base
     container_name: logstash
+    entrypoint: /sbin/init
+    privileged: true
     security_opt:
       - seccomp:unconfined
     volumes:
@@ -43,6 +47,8 @@ services:
       context: ./dockerfiles 
       dockerfile: centos7_base
     container_name: elasticsearch
+    entrypoint: /sbin/init
+    privileged: true
     security_opt:
       - seccomp:unconfined
     volumes:
@@ -61,6 +67,7 @@ services:
       context: ./dockerfiles 
       dockerfile: centos7_base
     container_name: kibana
+    privileged: true
     security_opt:
       - seccomp:unconfined
     volumes:
@@ -75,6 +82,8 @@ services:
       context: ./dockerfiles 
       dockerfile: centos7_dovetail
     container_name: dovetail
+    entrypoint: /sbin/init
+    privileged: true
     security_opt:
       - seccomp:unconfined
     volumes:
