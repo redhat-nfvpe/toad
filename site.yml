@@ -29,10 +29,14 @@
 
   post_tasks:
     - name: Where is Kibana located?
-
       debug:
         msg: "Kibana can be reached at http://{{hostvars[inventory_hostname]['ansible_default_ipv4']['address']}}:5601/"
-      when: elk_deployed
+      when: elk_deployed and ansible_connection != 'docker'
+
+    - name: Where is Kibana located? (docker)
+      debug:
+        msg: "Kibana can be reached at http://localhost:5601/"
+      when: elk_deployed and ansible_connection == 'docker'
 
 - hosts: jenkins_master
   tags:
@@ -42,3 +46,9 @@
     - name: Where is Jenkins Master located?
       debug:
         msg: "Jenkins Master can be reached at http://{{hostvars[inventory_hostname]['ansible_default_ipv4']['address']}}:8080/"
+      when: ansible_connection != 'docker'
+
+    - name: Where is Jenkins Master located? (docker)
+      debug:
+        msg: "Jenkins Master can be reached at http://localhost:8080/"
+      when: ansible_connection == 'docker'

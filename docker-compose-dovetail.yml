@@ -10,6 +10,18 @@ services:
     container_name: jenkins_master
     entrypoint: /sbin/init
     privileged: true
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - /run
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - ./:/opt/toad
+      - ./container_data/jenkins/data:/var/lib/jenkins/userContent
+      - ./container_data/jenkins/log:/var/log/jenkins
+      - ./container_data/jenkins/jobs:/etc/jenkins_jobs
+    entrypoint: /sbin/init
+    ports:
+      - "8080:8080"
 
   logstash:
     build: 
@@ -18,6 +30,17 @@ services:
     container_name: logstash
     entrypoint: /sbin/init
     privileged: true
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - /run
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - ./:/opt/toad
+      - ./container_data/logstash/config:/etc/logstash/conf.d
+      - ./container_data/logstash/log:/var/log/logstash/logstash.log
+    entrypoint: /sbin/init
+    ports:
+      - "5044:5044"
 
   elasticsearch:
     build: 
@@ -26,14 +49,33 @@ services:
     container_name: elasticsearch
     entrypoint: /sbin/init
     privileged: true
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - /run
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - ./:/opt/toad
+      - ./container_data/elasticsearch/log:/var/log/elasticsearch
+      - ./container_data/elasticsearch/data:/var/lib/elasticsearch
+      - ./container_data/elasticsearch/config:/etc/elasticsearch
+    entrypoint: /sbin/init
+    ports:
+      - "9200:9200"
 
   kibana:
     build: 
       context: ./dockerfiles 
       dockerfile: centos7_base
     container_name: kibana
-    entrypoint: /sbin/init
     privileged: true
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - /run
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - ./:/opt/toad
+      - ./container_data/kibana/config:/opt/kibana/config
+    entrypoint: /sbin/init
 
   dovetail:
     build: 
@@ -42,3 +84,12 @@ services:
     container_name: dovetail
     entrypoint: /sbin/init
     privileged: true
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - ./:/opt/toad
+    entrypoint: /sbin/init
+    ports:
+      - "443:443"
+      - "5601:5601"

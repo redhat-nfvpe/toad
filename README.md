@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/redhat-nfvpe/toad.svg?branch=master)](https://travis-ci.org/redhat-nfvpe/toad)
 
+![toad_logo][toad_logo]
+
 TOAD (TripleO Automated Deployer) is a system that helps automate various
 OpenStack deployment scenarios using [TripleO
 Quickstart](https://github.com/openstack/tripleo-quickstart).
@@ -16,6 +18,14 @@ logs and write data into an ELK stack for data visualization.
 Find below an image of how the general workflow happens within TOAD:
 
 ![TOAD Workflow][toad_workflow]
+
+# Quickstart
+
+If you're on a Fedora 25 (or later) or CentOS 7.3 system, and you're ok with
+running a bash script as root, you can bootstrap your system with the following
+command:
+
+    curl http://bit.ly/toad-bootstrap -L -o - | sh
 
 # Requirements
 
@@ -114,12 +124,6 @@ Jenkins slaves via the `[jenkins_slave]` and `[jenkins_slave:vars]` headers.
 * slave_port
 * slave_credentialsId
 * slave_label
-
-On a Red Hat system, subscription of slaves can be managed automatically
-if you pass the right credentials:
-* rhn_subscription_username
-* rhn_subscription_password
-* rhn_subscription_pool_id
 
 ## Example Override Variable File
 Many of the values can be found in your OpenStack RC file, which can typically
@@ -361,6 +365,20 @@ Each environment needs to have the following content:
 - net_environment.yml: TripleO environment file that will be used. You can specify here all
   the typical TripleO settings that need to be customized.
 
+## RHN subscription
+
+On a Red Hat system, subscription of slaves can be managed automatically
+if you pass the right credentials:
+* rhn_subscription_username
+* rhn_subscription_password
+* rhn_subscription_pool_id
+
+Subscription can be managed automatically either on master or slaves, with the
+flags:
+* master_subscribe_rhn
+* slave_subscribe_rhn
+
 [toad_workflow]: https://raw.githubusercontent.com/redhat-nfvpe/toad/master/TOAD_Workflow.png
 
 [//]: # (vim: set filetype=markdown:expandtab)
+[toad_logo]: docs/logo/toad_logo.png

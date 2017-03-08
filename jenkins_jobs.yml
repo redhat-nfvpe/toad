@@ -58,6 +58,14 @@
         - clone_jobs
       become: false
 
+    - name: Change all tasks to jenkins slave (docker)
+      replace:
+        dest: "{{ jenkins_job_builder_file_jobs_src }}/project-toad.yaml"
+        regexp: "partner: master"
+        replace: "partner: toad"
+      delegate_to: localhost
+      when: deploy_type is defined and deploy_type == 'docker'
+
     - name: Create folder to store config
       file:
         path: "{{ jenkins_job_config_file_dest }}"
@@ -75,10 +83,11 @@
       when: deploy_type is not defined or deploy_type != 'docker'
 
     - name: Synchronize job config to remote server (docker)
-      copy:
-        src: "{{ jenkins_job_config_file_src }}"
-        dest: "{{ jenkins_job_config_file_dest }}"
+      command: rsync -r "/opt/toad/{{ jenkins_job_config_file_src }}" "{{ jenkins_job_config_file_dest }}"
       when: deploy_type is defined and deploy_type == 'docker'
+      tags:
+        # Skip ANSIBLE0006. Synchronize module is not available docker.
+        - skip_ansible_lint
 
     - name: Locally clone TOAD envs
       git:
@@ -110,10 +119,11 @@
       when: deploy_type is not defined or deploy_type != 'docker'
 
     - name: Synchronize baremetal envs to remote server (docker)
-      copy:
-        src: "{{ jenkins_job_baremetal_env_file_src }}/{{ jenkins_job_baremetal_env_path }}"
-        dest: "{{ jenkins_job_baremetal_file_dest }}"
+      command: rsync -r "/opt/toad/{{ jenkins_job_baremetal_env_file_src }}" "{{ jenkins_job_baremetal_file_dest }}"
       when: deploy_type is defined and deploy_type == 'docker'
+      tags:
+        # Skip ANSIBLE0006. Synchronize module is not available docker.
+        - skip_ansible_lint
 
   roles:
     - { role: 'leifmadsen.jenkins-job-builder' }
@@ -147,14 +157,16 @@
     - name: Synchronize JJB config to remote server (docker)
       become: true
       become_user: jenkins
-      copy:
-        dest: "{{ jenkins_job_builder_file_jobs_dest }}"
-        src: "{{ item }}"
+      command: rsync -r "{{ item }}" "{{ jenkins_job_builder_file_jobs_dest }}"
       when: jenkins_job_builder_file_jobs_src != "" and
             (deploy_type is defined and deploy_type == 'docker')
-      with_items: "{{ jenkins_job_builder_file_jobs_src }}"
+      with_items: "{{ jenkins_job_builder_file_jobs_src_docker }}"
       notify:
         - Check jenkins
+        - Reload jenkins-jobs
+      tags:
+        # Skip ANSIBLE0006. Synchronize module is not available docker.
+        - skip_ansible_lint
 
     - name: Results of JJB reload
       debug:

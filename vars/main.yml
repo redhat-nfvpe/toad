@@ -33,6 +33,7 @@ jenkins_job_builder_config_jenkins_url: "http://localhost:8080"
 jenkins_job_builder_config_job_builder_recursive: True
 jenkins_job_builder_git_jobs_src: "https://github.com/redhat-nfvpe/jenkins-jobs.git"
 jenkins_job_builder_file_jobs_src: "./files/jenkins-jobs"
+jenkins_job_builder_file_jobs_src_docker: "/opt/toad/files/jenkins-jobs"
 jenkins_job_builder_handler_check_retries: 10
 jenkins_job_builder_job_files:
   - "{{ jenkins_job_builder_file_jobs_src  }}/globals/"
@@ -101,6 +102,9 @@ filebeat_config_logging: |
       name: mybeat.log
       keepfiles: 7
 
+# RHN subscription
+master_subscribe_rhn: false
+slave_subscribe_rhn: false
 rhn_repos:
   - rhel-7-server-rpms
   - rhel-7-server-extras-rpms
