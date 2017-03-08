@@ -37,10 +37,11 @@ msg "Checking for system updates and installing dependencies."
 # install packages
 if [ "$ID" = "centos" ]; then
     $pm install epel-release -y
+    $pm install python python-pip -y
 fi
 
 # install pre-requisites
-$pm makecache --refresh
+$pm makecache
 $pm install git ntp ansible libselinux-python -y
 
 # run updates after installation of packages to avoid conflicts
@@ -71,16 +72,24 @@ systemctl start ntpd.service
 
 # install docker
 msg "-- install and enable Docker server, client, and compose"
-$pm install docker docker-client docker-compose -y
+$pm install docker docker-client -y
+if [ "$ID" = fedora ]; then
+    $pm install docker-compose -y
+else
+    pip install docker-compose
+fi
+
 groupadd docker     # add docker group so we can add toad user to it
-systemctl enable docker-containerd.service
+if [ "$ID" = "fedora" ]; then
+    systemctl enable docker-containerd.service
+    systemctl start docker-containerd.service
+fi
 systemctl enable docker.service
-systemctl start docker-containerd.service
 systemctl start docker.service
 
 # create toad user
 msg "Creating and setting up system user TOAD will run as."
-id toad > /dev/null 2&>1
+id toad > /dev/null 2>&1
 if [ $? -ne 0 ]; then
     adduser toad
 
