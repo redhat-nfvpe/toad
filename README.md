@@ -152,11 +152,11 @@ with the following template:
     elasticsearch
     kibana
 
-These names (e.g. jenkins_master, logstash, etc) should match the names as defined in 'docker-compose.yml'.
+These names (e.g. jenkins_master, logstash, etc) should match the names as defined in `./docker-compose.yml`.
 
 ### Adding baremetal slaves to a Docker deployment
 
-If you need to add jenkins slaves (baremetal), add slave information in 'hosts/containers'
+If you need to add jenkins slaves (baremetal), add slave information in `./hosts/containers`
 as the following (be sure to add `ansible_connection=ssh` as well).
 
     [jenkins_slave]
