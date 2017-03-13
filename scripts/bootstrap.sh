@@ -40,6 +40,10 @@ if [ "$ID" = "centos" ]; then
     $pm install python python-pip -y
 fi
 
+if [ "$ID" = "fedora"] && [ $VERSION_ID -gt 22 ]; then
+    $pm install python2-dnf -y
+fi
+
 # install pre-requisites
 $pm makecache
 $pm install git ntp ansible libselinux-python -y
