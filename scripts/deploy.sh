@@ -20,9 +20,7 @@ if [ "$current_user" != "toad" ]; then
 fi
 
 msg "Setup the 'toad' user password for all-in-one."
-sudo su -
-echo "toad" | passwd toad --stdin
-logout
+sudo /bin/bash -c 'echo "toad" | passwd toad --stdin'
 
 pushd $HOME/toad
 
