@@ -9,7 +9,7 @@ msg() {
 
 ############### Basic deployment
 
-msg "[!!!] This script will change the 'toad' user password and wipe it's ssh keys. Ctrl-C now to quit."
+msg "[!!!] This script will change the 'toad' user password and wipe its ssh keys. Ctrl-C now to quit."
 sleep 6
 
 current_user=$(whoami)
