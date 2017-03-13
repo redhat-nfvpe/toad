@@ -9,7 +9,7 @@ msg() {
 
 ############### Basic deployment
 
-msg "[!!!] This script will change the 'toad' user password. Ctrl-C now to quit."
+msg "[!!!] This script will change the 'toad' user password and wipe it's ssh keys. Ctrl-C now to quit."
 sleep 6
 
 current_user=$(whoami)
@@ -24,6 +24,14 @@ sudo /bin/bash -c 'echo "toad" | passwd toad --stdin'
 
 pushd $HOME/toad
 
+msg "Generating SSH key for toad and setting public key in authorized_keys"
+(mkdir ~/.ssh && chmod 700 ~/.ssh/) || true
+rm -f ~/.ssh/id_toad*
+rm -f ~/.ssh/authorized_keys
+ssh-keygen -t rsa -f ~/.ssh/id_toad -N ''
+cat ~/.ssh/id_toad.pub >> ~/.ssh/authorized_keys
+chmod 0644 ~/.ssh/authorized_keys
+
 msg "Configuring ~/.ansible/vars/toad_vars.yml."
 mkdir ~/.ansible/vars/
 cat > ~/.ansible/vars/toad_vars.yml <<EOF
@@ -34,7 +42,7 @@ EOF
 msg "Setting up our slave configuration."
 cat > hosts/minions <<EOF
 [jenkins_slave]
-slave01 ansible_connection=ssh ansible_host=172.18.0.1 ansible_user=toad ansible_ssh_pass=toad
+slave01 ansible_connection=ssh ansible_host=172.18.0.1 ansible_user=toad ansible_ssh_private_key_file=/home/toad/.ssh/id_toad
 
 [jenkins_slave:vars]
 slave_description=TOAD Testing Node
