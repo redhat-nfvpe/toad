@@ -25,7 +25,7 @@ sudo /bin/bash -c 'echo "toad" | passwd toad --stdin'
 pushd $HOME/toad
 
 msg "Configuring ~/.ansible/vars/toad_vars.yml."
-mkdir ~/.ansible/vars/
+mkdir -p ~/.ansible/vars/
 cat > ~/.ansible/vars/toad_vars.yml <<EOF
 elk_deployed: false
 filebeat_deployed: false
