@@ -25,38 +25,27 @@ If you're on a Fedora 25 (or later) or CentOS 7.3 system, and you're ok with
 running a bash script as root, you can bootstrap your system with the following
 command:
 
-    curl http://bit.ly/toad-bootstrap -L -o - | sh
+    curl -sSL http://bit.ly/toad-bootstrap | sh
+
+After bootstrapping your machine, you can deploy a Jenkins Master using the following commands:
+
+    su - toad
+    curl -sSL http://bit.ly/toad-deploy | sh
 
 # Requirements
 
-There are multiple ways to install TOAD. You deploy locally into a development
-environment using Vagrant; you can deploy locally into a Docker container
-or you can deploy to an OpenStack instance. Below you will find the list of 
-requirements for each of the deployment scenarios.
+TOAD is generally deployed in Docker containers. You can choose to deploy using Docker, or, together with an existing OpenStack deployment. Below you will find the list of requirements for each of the deployment scenarios.
 
 For Ansible, several roles are required, and you can install them as follows:
 
     ansible-galaxy install -r requirements.yml
 
-## Vagrant
-
-Deployment to Vagrant should be straight forward. The only real dependency is
-Vagrant itself, along with whatever provider backend you wish to utilize. Our
-preferred provider is libvirt (KVM). In order to use Vagrant with the libvirt
-provider, you'll need to install a new provider plugin.
-
-    vagrant plugin install vagrant-libvirt
-
-Additional information about other dependencies required by vagrant-libvirt are
-available at https://github.com/vagrant-libvirt/vagrant-libvirt
-
 ## Docker
 
-In addition to support OpenStack and Vagrant deployments, toad also
-utilizes Docker containers. In order to use Docker, you need to install
+TOAD primarily utilizes Docker containers. In order to use Docker, you need to install
 [docker-compose](https://docs.docker.com/compose/).
 
-At present, we tested using docker-compose 1.7.1, build 6c289830.
+At present, our docker-compose YAML file uses the version 2 specification, and should work with docker-compose version 1.6.0 or greater, and Docker engine 1.10.0 or later.
 
 ## OpenStack
 
@@ -149,47 +138,11 @@ be found in the _Access & Security_ section of the Horizon dashboard.
 
 # Deployment
 
-Deployment can be done via two methods: OpenStack cloud, or Vagrant development
-environment.
+Deployment can be done via two methods: stand-alone Docker or OpenStack cloud.
 
-## Base Deployment (Vagrant)
+Additionally, you can kick off the deployment with the `./scripts/deploy.sh` which bootstraps a simple deployment using the stand-alone Docker method.
 
-Deploying into a Vagrant development environment should be as simple as
-running:
-
-    vagrant up
-
-This will deploy all the virtual machines and apply the `site.yml` Ansible
-configuration to the virtual machines. The deployment uses the built in default
-networking configuration that Vagrant instantiates. At the end of the run, the
-web interface addresses for Jenkins and Kibana will be displayed.
-
-### Vagrant Pre-Configuration Customization
-
-You can add separate pre-configuration to your Vagrant nodes by providing an
-override file in the `vagrant/` directory (you'll need to create it). You can
-then add additional configuration information to Vagrant for those nodes such
-as additional provisioner or network configuration.
-
-For example, you could add a public network to your Jenkins master so that you
-can deploy virtual machines easily with Vagrant against libvirt, then access
-those nodes remotely.
-
-To do this, create the `vagrant/` directory, and then create the
-`Vagrantfile.jenkins_master` and add the following block of data:
-
-```
-    jenkins_master.vm.network :public_network,
-      :dev => "br0",
-      :mode => "bridge",
-      :type => "bridge"
-
-    jenkins_master.vm.provision "shell",
-      inline: 'sudo nmcli con mod "Wired connection 1" ipv4.route-metric 400 ; sudo nmcli con down "Wired connection 1" ; sudo nmcli con up "Wired connection 1" ;\
-               sudo nmcli con add type vlan ifname eth1.4 con-name eth1.4 dev eth1 id 4'
-```
-
-## Base Deployment (docker)
+## Base Deployment
 
 Start by creating `hosts/containers` (or similar) and add your baremetal machine
 with the following template:
@@ -202,6 +155,7 @@ with the following template:
 These names (e.g. jenkins_master, logstash, etc) should match the names as defined in 'docker-compose.yml'.
 
 ### Adding baremetal slaves to a Docker deployment
+
 If you need to add jenkins slaves (baremetal), add slave information in 'hosts/containers'
 as the following (be sure to add `ansible_connection=ssh` as well).
 
@@ -225,10 +179,12 @@ Then, you can run the following commands to setup containers and to setup the TO
 After you finish, you can stop these containers and restart them.
 
     $ docker-compose stop
-    (To restart them)
+
+Or, to restart the containers:
+
     $ docker-compose restart
 
-The following commands delete the containers.
+The following command deletes the containers:
 
     $ docker-compose down
 
@@ -249,8 +205,7 @@ security groups, and opened the corresponding ports:
   * `TCP: 80, 443`
 
 > **NOTE**: The security groups are only relevant for OpenStack cloud
-> deployments. There are no firewall rules managed by TOAD within a Vagrant
-> deployment.
+> deployments.
 
 The base set of four VMs created for the CI components in OpenStack are listed
 as follows (as defined in `host_vars/localhost`):
