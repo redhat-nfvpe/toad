@@ -48,4 +48,4 @@ msg "Spinning up a Jenkins Master."
 docker-compose up -d jenkins_master
 
 msg "Deploying a Jenkins Master and Slave."
-ansible-playbook site.yml --limit jenkins_master,jenkins_slave -e use_openstack_deploy=false -e deploy_type='docker' -c docker
+ansible-playbook site.yml --limit jenkins_master -e use_openstack_deploy=false -e deploy_type='docker' -c docker
