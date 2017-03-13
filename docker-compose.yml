@@ -2,9 +2,10 @@ version: '2'
 
 # docker-compose file to launch jenkins_master/ELK stack instead of VM.
 services:
+
   jenkins_master:
-    build: 
-      context: ./dockerfiles 
+    build:
+      context: ./dockerfiles
       dockerfile: centos7_base
     container_name: jenkins_master
     entrypoint: /sbin/init
@@ -23,8 +24,8 @@ services:
       - "8080:8080"
 
   logstash:
-    build: 
-      context: ./dockerfiles 
+    build:
+      context: ./dockerfiles
       dockerfile: centos7_base
     container_name: logstash
     entrypoint: /sbin/init
@@ -42,8 +43,8 @@ services:
       - "5044:5044"
 
   elasticsearch:
-    build: 
-      context: ./dockerfiles 
+    build:
+      context: ./dockerfiles
       dockerfile: centos7_base
     container_name: elasticsearch
     entrypoint: /sbin/init
@@ -62,8 +63,8 @@ services:
       - "9200:9200"
 
   kibana:
-    build: 
-      context: ./dockerfiles 
+    build:
+      context: ./dockerfiles
       dockerfile: centos7_base
     container_name: kibana
     entrypoint: /sbin/init
