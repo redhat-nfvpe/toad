@@ -1,7 +1,18 @@
+# vim: tabstop=2 shiftwidth=2 expandtab
 version: '2'
 
 # docker-compose file to launch jenkins_master/ELK stack instead of VM.
 services:
+  proxy:
+    image: traefik
+    command: --web --docker --docker.domain=${PROXY_DOMAIN} --docker.exposedbydefault=false --logLevel=${PROXY_LOG_LEVEL}
+    ports:
+      - "80:80"
+      - "8080:8080"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /dev/null:/traefik.toml
 
   jenkins_master:
     build:
@@ -10,6 +21,8 @@ services:
     container_name: jenkins_master
     entrypoint: /sbin/init
     privileged: true
+    depends_on:
+      - proxy
     security_opt:
       - seccomp:unconfined
     volumes:
@@ -19,9 +32,13 @@ services:
       - ./container_data/jenkins/data:/var/lib/jenkins/userContent
       - ./container_data/jenkins/log:/var/log/jenkins
       - ./container_data/jenkins/jobs:/etc/jenkins_jobs
-    entrypoint: /sbin/init
-    ports:
-      - "8080:8080"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=jenkins_master"
+      - "traefik.frontend.rule=Host:${PROXY_DOMAIN};Path:/jenkins"
+      - "traefik.port=8080"
+    expose:
+      - "8080"
 
   logstash:
     build:
@@ -38,9 +55,8 @@ services:
       - ./:/opt/toad
       - ./container_data/logstash/config:/etc/logstash/conf.d
       - ./container_data/logstash/log:/var/log/logstash/logstash.log
-    entrypoint: /sbin/init
-    ports:
-      - "5044:5044"
+    expose:
+      - "5044"
 
   elasticsearch:
     build:
@@ -58,9 +74,8 @@ services:
       - ./container_data/elasticsearch/log:/var/log/elasticsearch
       - ./container_data/elasticsearch/data:/var/lib/elasticsearch
       - ./container_data/elasticsearch/config:/etc/elasticsearch
-    entrypoint: /sbin/init
-    ports:
-      - "9200:9200"
+    expose:
+      - "9200"
 
   kibana:
     build:
@@ -69,6 +84,8 @@ services:
     container_name: kibana
     entrypoint: /sbin/init
     privileged: true
+    depends_on:
+      - proxy
     security_opt:
       - seccomp:unconfined
     volumes:
@@ -76,7 +93,10 @@ services:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
       - ./:/opt/toad
       - ./container_data/kibana/config:/opt/kibana/config
-    entrypoint: /sbin/init
-    ports:
-      - "443:443"
-      - "5601:5601"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=kibana"
+      - "traefik.frontend.rule=Host:${PROXY_DOMAIN};Path:/kibana"
+      - "traefik.port=5601"
+    expose:
+      - "5601"
