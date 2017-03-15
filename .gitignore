@@ -9,3 +9,4 @@ files/
 .vagrant/
 vagrant/
 container_data/
+doc/build/
