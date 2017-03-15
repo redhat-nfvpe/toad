@@ -27,10 +27,15 @@ command:
 
     curl -sSL http://bit.ly/toad-bootstrap | sh
 
-After bootstrapping your machine, you can deploy a Jenkins Master using the following commands:
+After bootstrapping your machine, you can perform an "all in one" Jenkins Master/Slave deployment with
+the following command:
 
     su - toad
     curl -sSL http://bit.ly/toad-deploy | sh
+
+With the "all in one" deployment, a Jenkins Master will be instantiated via Docker Compose and configured
+via Ansible. A Jenkins Slave will then be added to the Jenkins Master by logging into the virtual host that
+hosts the Docker containers (including the Jenkins Master).
 
 # Tracking Development
 
@@ -38,7 +43,9 @@ Development is tracked via [Waffle.IO](https://waffle.io) on the [TOAD Waffle Bo
 
 # Requirements
 
-TOAD is generally deployed in Docker containers. You can choose to deploy using Docker, or, together with an existing OpenStack deployment. Below you will find the list of requirements for each of the deployment scenarios.
+TOAD is generally deployed in Docker containers. You can choose to deploy using Docker, or, together with
+an existing OpenStack deployment. Below you will find the list of requirements for each of the deployment
+scenarios.
 
 For Ansible, several roles are required, and you can install them as follows:
 
@@ -49,7 +56,8 @@ For Ansible, several roles are required, and you can install them as follows:
 TOAD primarily utilizes Docker containers. In order to use Docker, you need to install
 [docker-compose](https://docs.docker.com/compose/).
 
-At present, our docker-compose YAML file uses the version 2 specification, and should work with docker-compose version 1.6.0 or greater, and Docker engine 1.10.0 or later.
+At present, our `docker-compose` YAML file uses the version 2 specification, and should work with 
+docker-compose version 1.6.0 or greater, and Docker engine 1.10.0 or later.
 
 ## OpenStack
 
@@ -144,7 +152,8 @@ be found in the _Access & Security_ section of the Horizon dashboard.
 
 Deployment can be done via two methods: stand-alone Docker or OpenStack cloud.
 
-Additionally, you can kick off the deployment with the `./scripts/deploy.sh` which bootstraps a simple deployment using the stand-alone Docker method.
+Additionally, you can kick off the deployment with the `./scripts/deploy.sh` which bootstraps a simple deployment 
+using the stand-alone Docker method.
 
 ## Base Deployment
 
@@ -193,6 +202,11 @@ The following command deletes the containers:
     $ docker-compose down
 
 ## Base Deployment (OpenStack)
+
+> **NOTE**: Deploying directly to OpenStack virtual machines is deprecated. It is
+> recommended that you perform a deployment using the Docker method (even if that is
+> hosted in a cloud instance on OpenStack). In a future version this method may be
+> removed.
 
 You may need to modify the `host_vars/localhost` file to adjust the
 `security_group` names, as the playbook does not currently create security
@@ -297,10 +311,11 @@ during your Ansible run).
 For OSP deployments, the build slaves need to be registered under RHN, and
 repositories and guest images need to be synced locally. In order to enable
 repository sync, you need to set the ``slave_mirror_sync`` var to ``true``.
-Please note that by default, the system relies on the slave hostname and public IP
-to generate a valid repository address. Please ensure that slave hostname is
-set properly, and that is resolving to a public ip, reachable by all the VMs or
-baremetal servers involved in the deployments.
+
+> **NOTE**: By default, the system relies on the slave hostname and public IP
+> to generate a valid repository address. Please ensure that slave hostname is
+> set properly, and that is resolving to a public ip, reachable by all the VMs or
+> baremetal servers involved in the deployments.
 
 ## Baremetal deployment
 
@@ -309,33 +324,33 @@ hardware environment configuration is needed. A sample repository is provided:
 `https://github.com/redhat-nfvpe/toad_envs`
 
 In order to customize the repositories please use the following settings:
-- jenkins_job_baremetal_env_git_src: path to the repository where to host the environments
-- jenkins_job_baremetal_env_path: if the environment is on a subfolder of the repo,
+- `jenkins_job_baremetal_env_git_src`: path to the repository where to host the environments
+- `jenkins_job_baremetal_env_path`: if the environment is on a subfolder of the repo,
 please specify the relative path here.
 
 The environment repo needs to have a folder for each environment that wants to be tested.
 Each environment needs to have the following content:
-- deploy_config.yml: it contains extra_args var, that will be the parameters needed
+- `deploy_config.yml`: it contains extra_args var, that will be the parameters needed
   to deploy the overcloud. If specifies flavors, nodes to scale and templates to be used.
-- env_settings.yml: TripleO quickstart env settings for the baremetal deployment. It defines
+- `env_settings.yml`: TripleO quickstart env settings for the baremetal deployment. It defines
   the network settings, undercloud config parameters and any specific setting needed.
-- instackenv.json: Data file where all the baremetal nodes are specified. For each node,
+- `instackenv.json`: Data file where all the baremetal nodes are specified. For each node,
   the IPMI address/user/password is required, as well as the provisioning macs.
-- net_environment.yml: TripleO environment file that will be used. You can specify here all
+- `net_environment.yml`: TripleO environment file that will be used. You can specify here all
   the typical TripleO settings that need to be customized.
 
 ## RHN subscription
 
 On a Red Hat system, subscription of slaves can be managed automatically
 if you pass the right credentials:
-* rhn_subscription_username
-* rhn_subscription_password
-* rhn_subscription_pool_id
+* `rhn_subscription_username`
+* `rhn_subscription_password`
+* `rhn_subscription_pool_id`
 
 Subscription can be managed automatically either on master or slaves, with the
 flags:
-* master_subscribe_rhn
-* slave_subscribe_rhn
+* `master_subscribe_rhn`
+* `slave_subscribe_rhn`
 
 [toad_workflow]: https://raw.githubusercontent.com/redhat-nfvpe/toad/master/TOAD_Workflow.png
 
