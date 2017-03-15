@@ -32,6 +32,10 @@ After bootstrapping your machine, you can deploy a Jenkins Master using the foll
     su - toad
     curl -sSL http://bit.ly/toad-deploy | sh
 
+# Tracking Development
+
+Development is tracked via [Waffle.IO](https://waffle.io) on the [TOAD Waffle Board](https://waffle.io/redhat-nfvpe/toad/join).
+
 # Requirements
 
 TOAD is generally deployed in Docker containers. You can choose to deploy using Docker, or, together with an existing OpenStack deployment. Below you will find the list of requirements for each of the deployment scenarios.
