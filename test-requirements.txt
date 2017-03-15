@@ -1,0 +1,4 @@
+# Python packages required for documentation building
+sphinx
+sphinx_rtd_theme
+recommonmark
