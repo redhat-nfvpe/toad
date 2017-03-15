@@ -36,7 +36,7 @@
       git:
         repo: "{{ jenkins_job_config_git_src }}"
         dest: "{{ jenkins_job_config_file_src }}"
-        version: master
+        version: "{{ jenkins_job_config_git_version }}"
         force: yes
         accept_hostkey: yes
       delegate_to: localhost
@@ -49,7 +49,7 @@
       git:
         repo: "{{ jenkins_job_builder_git_jobs_src }}"
         dest: "{{ jenkins_job_builder_file_jobs_src }}"
-        version: master
+        version: "{{ jenkins_job_builder_git_jobs_version }}"
         force: yes
         accept_hostkey: yes
       delegate_to: localhost
@@ -93,7 +93,7 @@
       git:
         repo: "{{ jenkins_job_baremetal_env_git_src }}"
         dest: "{{ jenkins_job_baremetal_env_file_src }}"
-        version: master
+        version: "{{ jenkins_job_baremetal_env_git_version }}"
         force: yes
         accept_hostkey: yes
       delegate_to: localhost
