@@ -1,0 +1,130 @@
+- hosts: all
+  gather_facts: false
+- hosts: jenkins_master
+  vars_files:
+    - "../vars/main.yml"
+    - ./vars/toad_vars.yml
+  tags:
+    - jenkins_master
+  vars:
+    sudo_defaults:
+      - defaults: '!requiretty'
+  pre_tasks:
+    - name: Add jenkins service unit to systemd in case of docker.
+      template:
+        src: jenkins_systemd.j2
+        dest: /etc/systemd/system/jenkins.service
+        owner: root
+        group: root
+        mode: "0655"
+      when: deploy_type is defined and deploy_type == 'docker'
+
+  roles: 
+    - { role: 'leifmadsen.jenkins' }
+    - { role: 'jenkins' }
+    # - { role: 'franklinkim.sudo' }
+    # - { role: 'geerlingguy.repo-epel' }
+    # - { role: 'geerlingguy.nginx' }
+
+  post_tasks:
+    # Operating system configuration and setup
+    - name: Add jenkins user to wheel group
+      user:
+        name: jenkins
+        home: /var/lib/jenkins
+        groups: wheel
+        append: yes
+        shell: /bin/bash
+
+    - name: Update ownership and perms for shadow
+      file:
+        group: wheel
+        mode: "0040"
+        path: /etc/shadow
+
+    - name: Create admin user in system
+      user:
+        name: "{{ jenkins_admin_username }}"
+        password: "{{ jenkins_admin_password |password_hash('sha512')}}"
+        shell: /bin/bash
+
+    - name: Ensure libsemanage-python is installed
+      package:
+        name: libsemanage-python
+        state: present
+
+    - name: Validate SELinux is enabled
+      selinux:
+        policy: targeted
+        state: permissive
+      when: ansible_connection != 'docker'
+
+    - name: SELinux -- Enable httpd_can_network_connect
+      seboolean:
+        name: httpd_can_network_connect
+        state: yes
+        persistent: yes
+      when: ansible_connection != 'docker'
+
+    # Copy in configuration for Nginx web proxy fronting Jenkins web UI
+    - name: Copy Jenkins Nginx Configuration
+      template:
+        src: jenkins_master-vhost.conf.j2
+        dest: /etc/nginx/conf.d/jenkins_master.conf
+        owner: root
+        group: root
+        mode: "0644"
+      notify: restart nginx
+
+    - name: Automate jenkins configuration
+      template:
+        src: "{{item.src}}"
+        dest: "{{item.dest}}"
+        owner: "{{item.owner}}"
+        group: "{{item.group}}"
+        mode: "{{item.mode}}"
+      notify: restart jenkins
+      with_items:
+        - src: jenkins_config/config.xml.j2
+          dest: /var/lib/jenkins/config.xml
+          owner: jenkins
+          group: jenkins
+          mode: "0644"
+        - src: jenkins_config/credentials.xml.j2
+          dest: /var/lib/jenkins/credentials.xml
+          owner: jenkins
+          group: jenkins
+          mode: "0644"
+        - src: jenkins_config/be.certipost.hudson.plugin.SCPRepositoryPublisher.xml.j2
+          dest: /var/lib/jenkins/be.certipost.hudson.plugin.SCPRepositoryPublisher.xml
+          owner: jenkins
+          group: jenkins
+          mode: "0644"
+
+    # Create directory where results from slave workspaces will be copied to.
+    - name: Create slave results directory
+      file:
+        path: "{{ jenkins_master_results_directory }}"
+        state: directory
+        owner: jenkins
+        group: jenkins
+        mode: "0755"
+
+    - include: rhel_register.yml
+      when: ansible_os_family == "RedHat" and master_subscribe_rhn|bool == True
+
+    - include: rhel_mirror_sync.yml
+      when: ansible_os_family == "RedHat" and master_mirror_sync|bool == true
+
+# - hosts: 
+#     - ren
+#     - stimpy
+#   roles:
+#     - role: nginx-install
+# - hosts: ren
+#   roles:
+#     - role: ren-html
+# - hosts: stimpy
+#   roles:
+#     - role: stimpy-html
+

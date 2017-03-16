@@ -1,0 +1,141 @@
+defaults:
+  PROXY_DOMAIN: "toad.tld"
+  PROXY_LOG_LEVEL: "DEBUG"
+version: '2'
+services:
+  # fails with "root user not found" (or some such.)
+  proxy:
+    image: traefik
+    command: --web --docker --docker.domain={{ PROXY_DOMAIN }} --docker.exposedbydefault=false --logLevel={{ PROXY_LOG_LEVEL }}
+    ports:
+      - "80:80"
+      - "8080:8080"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /dev/null:/traefik.toml
+
+  jenkins_master:
+    image: centos:centos7
+    # build:
+    #   context: ./dockerfiles
+    #   dockerfile: centos7_base
+    # container_name: jenkins_master
+    entrypoint: /sbin/init
+    privileged: true
+    # depends_on:
+    #   - proxy
+    # security_opt:
+    #   - seccomp:unconfined
+    volumes:
+      - /run
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - ./:/opt/toad
+      - ./container_data/jenkins/data:/var/lib/jenkins/userContent
+      - ./container_data/jenkins/log:/var/log/jenkins
+      - ./container_data/jenkins/jobs:/etc/jenkins_jobs
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=jenkins_master"
+      - "traefik.frontend.rule=Host:jenkins.{{ PROXY_DOMAIN }}"
+      - "traefik.port=8080"
+    expose:
+      - "8080"
+
+  # logstash:
+  #   build:
+  #     context: ./dockerfiles
+  #     dockerfile: centos7_base
+  #   container_name: logstash
+  #   entrypoint: /sbin/init
+  #   privileged: true
+  #   security_opt:
+  #     - seccomp:unconfined
+  #   volumes:
+  #     - /run
+  #     - /sys/fs/cgroup:/sys/fs/cgroup:ro
+  #     - ./:/opt/toad
+  #     - ./container_data/logstash/config:/etc/logstash/conf.d
+  #     - ./container_data/logstash/log:/var/log/logstash/logstash.log
+  #   expose:
+  #     - "5044"
+
+  # elasticsearch:
+  #   build:
+  #     context: ./dockerfiles
+  #     dockerfile: centos7_base
+  #   container_name: elasticsearch
+  #   entrypoint: /sbin/init
+  #   privileged: true
+  #   security_opt:
+  #     - seccomp:unconfined
+  #   volumes:
+  #     - /run
+  #     - /sys/fs/cgroup:/sys/fs/cgroup:ro
+  #     - ./:/opt/toad
+  #     - ./container_data/elasticsearch/log:/var/log/elasticsearch
+  #     - ./container_data/elasticsearch/data:/var/lib/elasticsearch
+  #     - ./container_data/elasticsearch/config:/etc/elasticsearch
+  #   expose:
+  #     - "9200"
+
+  # kibana:
+  #   build:
+  #     context: ./dockerfiles
+  #     dockerfile: centos7_base
+  #   container_name: kibana
+  #   entrypoint: /sbin/init
+  #   privileged: true
+  #   depends_on:
+  #     - proxy
+  #   security_opt:
+  #     - seccomp:unconfined
+  #   volumes:
+  #     - /run
+  #     - /sys/fs/cgroup:/sys/fs/cgroup:ro
+  #     - ./:/opt/toad
+  #     - ./container_data/kibana/config:/opt/kibana/config
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.backend=kibana"
+  #     - "traefik.frontend.rule=Host:kibana.${PROXY_DOMAIN}"
+  #     - "traefik.port=5601"
+  #   expose:
+  #     - "5601"
+
+
+  # ------------------------------------------
+  # Doug's reference (remove me at some point)
+  # ------------------------------------------
+  # ren:
+  #   image: centos:centos7
+  #   ports:
+  #     - "8080:80"
+  #   # user: nginx
+  #   command: "nginx" # [nginx, -c, /etc/nginx/nginx.conf]
+  #   dev_overrides:
+  #     ports: []
+  #     command: bin/false
+  #   options:
+  #     kube:
+  #       runAsUser: 997
+  #       replicas: 2
+  #     openshift:
+  #       replicas: 3
+  # stimpy:
+  #   image: centos:centos7
+  #   ports:
+  #     - "8081:80"
+  #   # user: nginx
+  #   command: [nginx, -c, /etc/nginx/nginx.conf]
+  #   dev_overrides:
+  #     ports: []
+  #     command: bin/false
+  #   options:
+  #     kube:
+  #       runAsUser: 997
+  #       replicas: 2
+  #     openshift:
+  #       replicas: 3
+registries: {}
+

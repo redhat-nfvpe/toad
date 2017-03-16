@@ -2,7 +2,7 @@
 hosts/
 !hosts/localhost
 !hosts/containers
-roles/
+/roles/
 inventory
 files/
 !files/filebeat.yml

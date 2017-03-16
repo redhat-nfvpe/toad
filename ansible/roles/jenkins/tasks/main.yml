@@ -1,0 +1,20 @@
+- name: Set facts for later use
+  set_fact:
+    jenkins_jar_location: "{{ jenkins_jar_location }}"
+    jenkins_hostname: "{{ jenkins_hostname }}"
+    jenkins_http_port: "{{ jenkins_http_port }}"
+    jenkins_url_prefix: "{{ jenkins_url_prefix }}"
+    jenkins_admin_username: "{{ jenkins_admin_username }}"
+    jenkins_admin_password: "{{ jenkins_admin_password }}"
+
+# In case of docker, jenkins is managed under systemd unit (see above)
+- name: jenkins init script is removed in case of docker
+  file:
+    path: /etc/init.d/jenkins
+    state: absent
+  when: deploy_type is defined and deploy_type == 'docker'
+
+- name: Install python-pip
+  package:
+    name: python-pip
+    state: present
