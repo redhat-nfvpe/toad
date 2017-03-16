@@ -7,6 +7,7 @@ services:
   proxy:
     image: traefik
     command: --web --docker --docker.domain={{ PROXY_DOMAIN }} --docker.exposedbydefault=false --logLevel={{ PROXY_LOG_LEVEL }}
+    user: traefik
     ports:
       - "80:80"
       - "8080:8080"

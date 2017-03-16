@@ -10,3 +10,5 @@ files/
 vagrant/
 container_data/
 doc/build/
+roles/*.*
+
