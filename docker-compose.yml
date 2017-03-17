@@ -20,6 +20,9 @@ services:
       - ./container_data/jenkins/log:/var/log/jenkins
       - ./container_data/jenkins/jobs:/etc/jenkins_jobs
     entrypoint: /sbin/init
+    networks:
+      default:
+        ipv4_address: 172.16.238.10
     ports:
       - "8080:8080"
 
@@ -39,6 +42,9 @@ services:
       - ./container_data/logstash/config:/etc/logstash/conf.d
       - ./container_data/logstash/log:/var/log/logstash/logstash.log
     entrypoint: /sbin/init
+    networks:
+      default:
+        ipv4_address: 172.16.238.11
     ports:
       - "5044:5044"
 
@@ -59,6 +65,9 @@ services:
       - ./container_data/elasticsearch/data:/var/lib/elasticsearch
       - ./container_data/elasticsearch/config:/etc/elasticsearch
     entrypoint: /sbin/init
+    networks:
+      default:
+        ipv4_address: 172.16.238.12
     ports:
       - "9200:9200"
 
@@ -77,6 +86,15 @@ services:
       - ./:/opt/toad
       - ./container_data/kibana/config:/opt/kibana/config
     entrypoint: /sbin/init
+    networks:
+      default:
+        ipv4_address: 172.16.238.13
     ports:
       - "443:443"
       - "5601:5601"
+
+networks:
+    default:
+      ipam:
+        config:
+          - subnet: 172.16.238.0/24
