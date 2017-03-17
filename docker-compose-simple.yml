@@ -1,19 +1,9 @@
 # vim: tabstop=2 shiftwidth=2 expandtab
 version: '2'
 
-# docker-compose file to launch jenkins_master/ELK stack/traefic instead of VM.
+# docker-compose file to launch jenkins_master/ELK stack instead of VM.
+# This docker-compose file focus on minimum set for TOAD.
 services:
-  proxy:
-    image: traefik
-    command: --web --docker --docker.domain=${PROXY_DOMAIN} --docker.exposedbydefault=false --logLevel=${PROXY_LOG_LEVEL}
-    ports:
-      - "80:80"
-      - "8080:8080"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /dev/null:/traefik.toml
-
   jenkins_master:
     build:
       context: ./dockerfiles
@@ -21,8 +11,6 @@ services:
     container_name: jenkins_master
     entrypoint: /sbin/init
     privileged: true
-    depends_on:
-      - proxy
     security_opt:
       - seccomp:unconfined
     volumes:
@@ -32,11 +20,6 @@ services:
       - ./container_data/jenkins/data:/var/lib/jenkins/userContent
       - ./container_data/jenkins/log:/var/log/jenkins
       - ./container_data/jenkins/jobs:/etc/jenkins_jobs
-    labels:
-      - "traefik.enable=true"
-      - "traefik.backend=jenkins_master"
-      - "traefik.frontend.rule=Host:jenkins.${PROXY_DOMAIN}"
-      - "traefik.port=8080"
     expose:
       - "8080"
 
@@ -84,8 +67,6 @@ services:
     container_name: kibana
     entrypoint: /sbin/init
     privileged: true
-    depends_on:
-      - proxy
     security_opt:
       - seccomp:unconfined
     volumes:
@@ -93,10 +74,15 @@ services:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
       - ./:/opt/toad
       - ./container_data/kibana/config:/opt/kibana/config
-    labels:
-      - "traefik.enable=true"
-      - "traefik.backend=kibana"
-      - "traefik.frontend.rule=Host:kibana.${PROXY_DOMAIN}"
-      - "traefik.port=5601"
     expose:
+      - "443"
       - "5601"
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.61.122.0/24
+
