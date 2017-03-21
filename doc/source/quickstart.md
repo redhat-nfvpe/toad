@@ -125,4 +125,30 @@ single network node. You'll need a fairly robust machine for this type of setup
 though. It is recommended that you use a machine with at least 32GB of RAM,
 ideally 64GB of RAM.
 
+## Logging Into Web Services
+
+Web services are deployed behind the [traefik reverse
+proxy](https://docs.traefik.io/) and can be accessed via hostnames. These
+hostnames are configured in `docker-compose.yml` via a traefik frontend rule.
+The hostname is one of `jenkins.${PROXY_DOMAIN}` or `kibana.${PROXY_DOMAIN}`
+where `${PROXY_DOMAIN}` is an environment variable defined in `toad/.env`. By
+default the domain is defined as `toad.tld`.
+
+In order for the traefik proxy to know where to forward your requests, you'll
+need to either 
+
+1. setup DNS services to point the subdomains to the primary address of your
+   virtual host where Docker and Traefik are running
+1. modify your `/etc/hosts` file to statically assigned the hostname to the
+   primary interface of your virtual host.
+
+For example, in my network my virtual host primary network interface has the IP
+address of `192.168.5.151`. I can then define the default hostname to that
+address in my `/etc/hosts` file.
+
+    192.168.5.151	kibana.toad.tld jenkins.toad.tld
+
+Once you've completed the provisioning steps, you can login to your Jenkins
+master by browsing to http://jenkins.toad.tld.
+
 [toad_aio_overview]: toad_aio_overview.png
