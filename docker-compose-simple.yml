@@ -77,12 +77,3 @@ services:
     expose:
       - "443"
       - "5601"
-
-networks:
-  default:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 10.61.122.0/24
-
