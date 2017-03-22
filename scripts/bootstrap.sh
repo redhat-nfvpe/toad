@@ -26,7 +26,7 @@ if [ "$ID" != "fedora" ] && [ "$ID" != "centos" ]; then
 fi
 
 # setup our package manager
-if [ "$ID" = "fedora" ] && [ $VERSION_ID -gt 22 ]; then
+if [ "$ID" = "fedora" ] && [ "$VERSION_ID" -gt 22 ]; then
     pm="dnf"
 
 else
@@ -40,7 +40,7 @@ if [ "$ID" = "centos" ]; then
     $pm install python python-pip -y
 fi
 
-if [ "$ID" = "fedora"] && [ $VERSION_ID -gt 22 ]; then
+if [ "$ID" = "fedora" ] && [ "$VERSION_ID" -gt 22 ]; then
     $pm install python2-dnf -y
 fi
 
@@ -50,9 +50,9 @@ $pm install git ntp ansible libselinux-python -y
 
 # run updates after installation of packages to avoid conflicts
 updates_applied=0
-$pm check-update
 
-if [ $? -ne 0 ]; then
+
+if ! $pm check-update; then
     msg "Updates are required. Applying. Please be patient."
     $pm update -y
     updates_applied=1
@@ -93,8 +93,8 @@ systemctl start docker.service
 
 # create toad user
 msg "Creating and setting up system user TOAD will run as."
-id toad > /dev/null 2>&1
-if [ $? -ne 0 ]; then
+
+if ! id toad > /dev/null 2>&1; then
     adduser toad
 
     # permissions for sudo
@@ -108,10 +108,10 @@ fi
 # clone TOAD as the toad user
 msg "Getting TOAD from upstream."
 su - toad
-cd $HOME
+cd "$HOME" || exit
 if [ ! -d toad ]; then
     git clone https://github.com/redhat-nfvpe/toad.git
-    cd toad
+    cd toad || exit
     ansible-galaxy install -r requirements.yml
 fi
 
