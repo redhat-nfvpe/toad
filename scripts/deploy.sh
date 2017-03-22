@@ -22,7 +22,7 @@ fi
 msg "Setup the 'toad' user password for all-in-one."
 sudo /bin/bash -c 'echo "toad" | passwd toad --stdin'
 
-pushd $HOME/toad
+pushd "$HOME/toad"
 
 msg "Generating SSH key for toad and setting public key in authorized_keys"
 (mkdir ~/.ssh && chmod 700 ~/.ssh/) || true
