@@ -1,6 +1,10 @@
 Welcome to the documentation for TOAD!
 ======================================
 
+.. image:: toad_logo.png
+    :align: center
+    :width: 225px
+
 Project Overview
 ----------------
 
