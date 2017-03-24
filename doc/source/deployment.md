@@ -33,6 +33,7 @@ as the following (be sure to add `ansible_connection=ssh` as well).
     slave_label=toad
 
 ### Running containers and start provisioning
+
 Then, you can run the following commands to setup containers and to setup the TOAD environment.
 
     $ docker-compose up -d
@@ -164,8 +165,8 @@ repository sync, you need to set the ``slave_mirror_sync`` var to ``true``.
 
 > **NOTE**: By default, the system relies on the slave hostname and public IP
 > to generate a valid repository address. Please ensure that slave hostname is
-> set properly, and that is resolving to a public ip, reachable by all the VMs or
-> baremetal servers involved in the deployments.
+> set properly, and that is resolving to a public ip, reachable by all the VMs
+> or baremetal servers involved in the deployments.
 
 ## Baremetal deployment
 
@@ -173,21 +174,25 @@ In order to perform baremetal deployments, an additional repository to host the
 hardware environment configuration is needed. A sample repository is provided:
 `https://github.com/redhat-nfvpe/toad_envs`
 
-In order to customize the repositories please use the following settings:
-- `jenkins_job_baremetal_env_git_src`: path to the repository where to host the environments
-- `jenkins_job_baremetal_env_path`: if the environment is on a subfolder of the repo,
-please specify the relative path here.
+You can customize the repositories using the following settings:
+- `jenkins_job_baremetal_env_git_src`: path to the repository where to host the
+  environments
+- `jenkins_job_baremetal_env_path`: if the environment is in a subfolder of the
+  repo, please specify the relative path here.
 
-The environment repo needs to have a folder for each environment that wants to be tested.
-Each environment needs to have the following content:
-- `deploy_config.yml`: it contains extra_args var, that will be the parameters needed
-  to deploy the overcloud. If specifies flavors, nodes to scale and templates to be used.
-- `env_settings.yml`: TripleO quickstart env settings for the baremetal deployment. It defines
-  the network settings, undercloud config parameters and any specific setting needed.
-- `instackenv.json`: Data file where all the baremetal nodes are specified. For each node,
-  the IPMI address/user/password is required, as well as the provisioning macs.
-- `net_environment.yml`: TripleO environment file that will be used. You can specify here all
-  the typical TripleO settings that need to be customized.
+The environment repo needs to have a folder for each environment that wants to
+be tested. Each environment needs to have the following content:
+- `deploy_config.yml`: it contains `extra_args` var, containing the
+  parameters needed to deploy the overcloud. It specifies flavors, nodes to
+  scale and templates to be used.
+- `env_settings.yml`: TripleO quickstart environment settings for the baremetal
+  deployment. It defines the network settings, undercloud configuration
+  parameters and any additional settings needed.
+- `instackenv.json`: Data file where all the baremetal nodes are specified. For
+  each node, the IPMI address/user/password is required, as well as the
+  provisioning MAC addresses.
+- `net_environment.yml`: TripleO environment file that will be used. You can
+  specify here all the typical TripleO settings that need to be customized.
 
 ## RHN subscription
 
