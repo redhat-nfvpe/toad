@@ -25,5 +25,5 @@ Documentation for TOAD can be found at [Read The
 Docs](http://toad.rtfd.io)
 
 [//]: # (vim: set filetype=markdown:expandtab)
-[toad_logo]: doc/source/toad_logo.png
+[toad_logo]: doc/source/images/toad_logo.png
 [toad_workflow]: https://raw.githubusercontent.com/redhat-nfvpe/toad/master/TOAD_Workflow.png

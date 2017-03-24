@@ -151,4 +151,4 @@ address in my `/etc/hosts` file.
 Once you've completed the provisioning steps, you can login to your Jenkins
 master by browsing to http://jenkins.toad.tld.
 
-[toad_aio_overview]: toad_aio_overview.png
+[toad_aio_overview]: images/toad_aio_overview.png
