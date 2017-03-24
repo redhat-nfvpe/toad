@@ -10,6 +10,7 @@ jenkins_pkg_url: http://pkg.jenkins.io/redhat-stable
 jenkins_version: 2.32.2
 jenkins_repo_url: http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
 jenkins_plugins:
+  - matrix-project
   - build-timeout
   - copy-to-slave
   - credentials-binding
