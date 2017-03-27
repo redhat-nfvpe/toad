@@ -1,7 +1,7 @@
 Welcome to the documentation for TOAD!
 ======================================
 
-.. image:: toad_logo.png
+.. image:: images/toad_logo.png
     :align: center
     :width: 225px
 
