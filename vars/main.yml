@@ -19,7 +19,9 @@ jenkins_plugins:
   - scp
   - ssh-slaves
   - ws-cleanup
-  - xtrigger
+  - fstrigger
+  - urltrigger
+  - buildresult-trigger
   - envinject
 jenkins_scp_sites:
   - hostname: 127.0.0.1
