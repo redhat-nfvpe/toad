@@ -33,7 +33,7 @@ cat ~/.ssh/id_toad.pub >> ~/.ssh/authorized_keys
 chmod 0644 ~/.ssh/authorized_keys
 
 msg "Configuring ~/.ansible/vars/toad_vars.yml."
-mkdir ~/.ansible/vars/
+mkdir -p ~/.ansible/vars/
 cat > ~/.ansible/vars/toad_vars.yml <<EOF
 elk_deployed: false
 filebeat_deployed: false
@@ -56,4 +56,4 @@ msg "Spinning up a Jenkins Master."
 docker-compose up -d jenkins_master
 
 msg "Deploying a Jenkins Master and Slave."
-ansible-playbook site.yml --limit jenkins_master,jenkins_slave -e use_openstack_deploy=false -e deploy_type='docker' -c docker
+ansible-playbook site.yml --limit jenkins_master -e use_openstack_deploy=false -e deploy_type='docker' -c docker
