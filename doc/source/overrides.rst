@@ -131,3 +131,33 @@ files used for the deployment of the network during a TripleO run. These files
 are used by the undercloud during the OpenStack stack deployment in order to
 know how to configure the networking. These files are generally only used in
 baremetal overcloud deployments.
+
+Update Jenkins Jobs
+-------------------
+
+TOAD enables a developer to iterate through job configuration and push those
+changes into the local development environment. The deployment of the jobs is
+done via JJB, and the TOAD Ansible playbooks allows a simple job update in your
+Jenkins environment.
+
+To pull the latest changes from your upstream working repository (which you can
+override in `~/.ansible/vars/toad_vars.yml`) and update your job definitions,
+run the following Ansible command from your `toad` working directory:
+
+::
+
+    ansible-playbook site.yml --limit jenkins_master --tags jenkins_jobs
+
+.. note:: You will need to add `-c docker` if you're deploying into a Docker
+          environment.
+
+If you want to make local changes to the jobs prior to submitting changes to
+the upstream `jenkins-jobs` repository, you can make use of the `sync_jobs` tag
+instead.
+
+::
+
+    ansible-playbook site.yml --limit jenkins_master --tags sync_jobs
+
+With the use of the `sync_jobs` tags you can build up local jobs and test them
+prior to submitting them back upstream for review.

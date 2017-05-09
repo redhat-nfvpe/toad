@@ -81,6 +81,8 @@
         dest: "{{ jenkins_job_config_file_dest }}"
         archive: yes
       when: deploy_type is not defined or deploy_type != 'docker'
+      tags:
+        - sync_jobs
 
     - name: Synchronize job config to remote server (docker)
       command: rsync -r "/opt/toad/{{ jenkins_job_config_file_src }}" "{{ jenkins_job_config_file_dest }}"
@@ -88,6 +90,7 @@
       tags:
         # Skip ANSIBLE0006. Synchronize module is not available docker.
         - skip_ansible_lint
+        - sync_jobs
 
     - name: Locally clone TOAD envs
       git:
@@ -126,7 +129,7 @@
         - skip_ansible_lint
 
   roles:
-    - { role: 'leifmadsen.jenkins-job-builder' }
+    - { role: 'leifmadsen.jenkins-job-builder', tags: sync_jobs }
 
   post_tasks:
     - name: Synchronize JJB config to remote server
@@ -167,6 +170,7 @@
       tags:
         # Skip ANSIBLE0006. Synchronize module is not available docker.
         - skip_ansible_lint
+        - sync_jobs
 
     - name: Results of JJB reload
       debug:
