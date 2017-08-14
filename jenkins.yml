@@ -226,44 +226,46 @@
     - ~/.ansible/vars/toad_vars.yml
 
   tasks:
-    - name: Check if our node already exists
-      command: >
-        java -jar {{ jenkins_jar_location }} -s http://{{ jenkins_hostname }}:{{ jenkins_http_port }}{{ jenkins_url_prefix | default('') }}/
-        get-node {{ item }}
-        --username {{ jenkins_admin_username }}
-        --password {{ jenkins_admin_password }}
-      ignore_errors: true
-      register: jenkins_cli_get_nodes
-      changed_when: false
+    - name: Manage jenkins slaves
+      block:
+        - name: Check if our node already exists
+          command: >
+            java -jar {{ jenkins_jar_location }} -s http://{{ jenkins_hostname }}:{{ jenkins_http_port }}{{ jenkins_url_prefix | default('') }}/
+            get-node {{ item }}
+            --username {{ jenkins_admin_username }}
+            --password {{ jenkins_admin_password }}
+          ignore_errors: true
+          register: jenkins_cli_get_nodes
+          changed_when: false
+          with_items:
+             - "{{ groups['jenkins_slave'] }}"
+
+        - name: Deploy template for Jenkins slave node
+          template:
+            src: jenkins_slave.j2
+            dest: /tmp/jenkins_slave_{{ item.item }}.tmpl
+          when: jenkins_cli_get_nodes is defined and "'jenkins_slave' in groups" and "{{ item.rc }}" != '0'
+          with_items:
+             - "{{ jenkins_cli_get_nodes.results }}"
+
+        - name: Add Jenkins slave node to the master
+          shell: >
+            java -jar {{ jenkins_jar_location }} -s http://{{ jenkins_hostname }}:{{ jenkins_http_port }}{{ jenkins_url_prefix | default('') }}/
+            create-node {{ item.item }}
+            --username {{ jenkins_admin_username }}
+            --password {{ jenkins_admin_password }} < /tmp/jenkins_slave_{{ item.item }}.tmpl
+          when: jenkins_cli_get_nodes is defined and "{{ item.rc }}" != '0'
+          with_items:
+             - "{{ jenkins_cli_get_nodes.results }}"
+
+        - name: Remove template for Jenkins slave node
+          file:
+            name: /tmp/jenkins_slave_{{ item }}.tmpl
+            state: absent
+          when: jenkins_cli_get_nodes is defined and "{{ item.rc }}" != '0'
+          with_items:
+             - "{{ jenkins_cli_get_nodes.results }}"
       when: "'jenkins_slave' in groups"
-      with_items:
-         - "{{ groups['jenkins_slave'] }}"
-
-    - name: Deploy template for Jenkins slave node
-      template:
-        src: jenkins_slave.j2
-        dest: /tmp/jenkins_slave_{{ item.item }}.tmpl
-      when: jenkins_cli_get_nodes is defined and "{{ item.rc }}" != '0'
-      with_items:
-         - "{{ jenkins_cli_get_nodes.results }}"
-
-    - name: Add Jenkins slave node to the master
-      shell: >
-        java -jar {{ jenkins_jar_location }} -s http://{{ jenkins_hostname }}:{{ jenkins_http_port }}{{ jenkins_url_prefix | default('') }}/
-        create-node {{ item.item }}
-        --username {{ jenkins_admin_username }}
-        --password {{ jenkins_admin_password }} < /tmp/jenkins_slave_{{ item.item }}.tmpl
-      when: jenkins_cli_get_nodes is defined and "{{ item.rc }}" != '0'
-      with_items:
-         - "{{ jenkins_cli_get_nodes.results }}"
-
-    - name: Remove template for Jenkins slave node
-      file:
-        name: /tmp/jenkins_slave_{{ item }}.tmpl
-        state: absent
-      when: jenkins_cli_get_nodes is defined and "{{ item.rc }}" != '0'
-      with_items:
-         - "{{ jenkins_cli_get_nodes.results }}"
 
 ######################
 # Deploy Jenkins jobs
