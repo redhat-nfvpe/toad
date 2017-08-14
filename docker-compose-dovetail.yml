@@ -93,3 +93,9 @@ services:
     ports:
       - "443:443"
       - "5601:5601"
+
+networks:
+    default:
+      ipam:
+        config:
+            - subnet: 172.16.238.0/24

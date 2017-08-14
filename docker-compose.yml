@@ -100,3 +100,9 @@ services:
       - "traefik.port=5601"
     expose:
       - "5601"
+
+networks:
+    default:
+      ipam:
+        config:
+          - subnet: 172.16.238.0/24
