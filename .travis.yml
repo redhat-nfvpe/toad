@@ -1,6 +1,6 @@
 ---
 env:
-    DOCKER_COMPOSE_VERSION: 1.9.0
+    DOCKER_COMPOSE_VERSION: 1.15.0
 
 sudo: required
 language: python
@@ -12,7 +12,6 @@ services:
 before_install:
     # perform updates
     - sudo apt-get update -qq
-    - sudo apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y docker-engine
 
     # check for docker-compose version
     - docker-compose --version
